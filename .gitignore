@@ -1,0 +1,7 @@
+log/
+tmp/
+spec/examples.txt
+public/
+.idea
+# Ignore application configuration
+/config/application.yml

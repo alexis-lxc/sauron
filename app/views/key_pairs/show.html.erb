@@ -1,0 +1,24 @@
+<%- model_class = KeyPair -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:name) %>:</strong></dt>
+  <dd><%= @key_pair.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:fingerprint) %>:</strong></dt>
+  <dd><%= @key_pair.fingerprint %></dd>
+  <%- if flash[:private_key] %>
+    <dt></dt>
+    <dd>
+      <br />
+      <%= link_to t('.private_key', :default => t("private_key")),
+    "data:application/octet-stream;charset=utf-16le;base64,#{Base64.encode64(flash[:private_key])}", :download => @key_pair.name, :class => 'btn btn-primary btn-sm' %>
+      <p class="text-danger">Warning: You can only download private key this once.</p>
+    </dd>
+  <%- end %>
+
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+    key_pairs_path(), :class => 'btn btn-primary btn-sm' %>
+</dl>
+

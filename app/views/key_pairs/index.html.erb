@@ -1,0 +1,28 @@
+<%- model_class = KeyPair -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+</div>
+<div class="pull-right">
+  <%= link_to t('.new', :default => t("helpers.links.new")), new_key_pair_path, :class => 'btn btn-primary btn-sm' %>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:name) %></th>
+      <th><%= model_class.human_attribute_name(:fingerprint) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @key_pairs.each do |key_pair| %>
+      <tr>
+        <td><%= key_pair.name %></td>
+        <td><%= key_pair.fingerprint %></td>
+        <td>
+          <%= link_to t('.show', :default => t("helpers.links.show")), key_pair_path(key_pair), :class => 'btn btn-primary btn-sm' %>
+          <%= link_to t('.delete', :default => t("helpers.links.delete")), key_pair_path(key_pair), method: :delete, :class => 'btn btn-danger btn-sm' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

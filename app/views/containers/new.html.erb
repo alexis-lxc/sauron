@@ -1,0 +1,48 @@
+<%= form_for @container, :html => {:class => "form-horizontal container"} do |f| %>
+
+  <% if @container.errors.any? %>
+    <div id="error_expl" class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= pluralize(@container.errors.count, "error") %> prohibited this container from being saved:</h3>
+      </div>
+      <div class="panel-body">
+        <ul>
+          <% @container.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :container_hostname, :class => 'control-label col-md-2' %>
+    <div class="col-md-6">
+      <%= f.text_field :container_hostname, :class => 'form-control', :placeholder => 'Hostname: Eg: Container1' %>
+    </div>
+    <%= f.error_span(:container_hostname) %>
+  </div>
+  <div class="form-group">
+    <%= f.label :lxd_host_ipaddress, :class => 'control-label col-md-2' %>
+    <div class="col-md-6">
+      <%= f.text_field :lxd_host_ipaddress, :class => 'form-control', :placeholder => 'IP Address Eg: 11.14.15.16'  %>
+    </div>
+    <%= f.error_span(:lxd_host_ipaddress) %>
+  </div>
+  <div class="form-group">
+    <%= f.label :key_pair, :class => 'control-label col-md-2' %>
+    <div class="col-md-6">
+      <%= f.select :key_pair_name, @key_pairs.collect{ |p| [ p.name, p.name ] }, include_blank: t('specify_key_pair', :default => t("specify_key_pair")) %>
+    </div>
+    <%= f.error_span(:key_pair_name) %>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-offset-2 col-md-6">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                  container_hosts_path, :class => 'btn btn-default' %>
+    </div>
+  </div>
+
+<% end %>

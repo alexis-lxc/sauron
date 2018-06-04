@@ -1,0 +1,9 @@
+<%= Figaro.env.rails_env%>:
+  adapter:  postgresql
+  encoding: unicode
+  timeout:  5000
+  host:     <%= Figaro.env.DB_HOST%>
+  database: <%= Figaro.env.DB_NAME%>
+  user:     <%= Figaro.env.DB_USER%>
+  password: <%= Figaro.env.DB_PASSWORD%>
+  pool:     <%= Figaro.env.DB_POOL%>

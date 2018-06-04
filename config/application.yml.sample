@@ -1,0 +1,12 @@
+DB_HOST: localhost
+DB_USER: postgres
+DB_POOL: 10
+DB_PASSWORD:
+
+test:
+  RAILS_ENV: test
+  DB_NAME: sauron_test
+
+development:
+  RAILS_ENV: development
+  DB_NAME: sauron_development
