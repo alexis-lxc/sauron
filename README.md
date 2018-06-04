@@ -1,4 +1,4 @@
-# Sauron
+# Sauron [![Build Status](https://travis-ci.org/alexis-lxc/sauron.svg?branch=master)](https://travis-ci.org/alexis-lxc/sauron)
 
 NOTE: Not ready for Production use.
 
