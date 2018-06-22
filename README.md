@@ -31,5 +31,5 @@ This will to launch,manage lxc containers on multiple lxd host.
 
 ## Maintainers:
 
-* [Akashdeep singh](https://github.com/bitfurry)
-* [Sahil Kharb](https://github.com/akashkahlon)
+* [Akashdeep singh](https://github.com/akashkahlon)
+* [Sahil Kharb](https://github.com/bitfury)
