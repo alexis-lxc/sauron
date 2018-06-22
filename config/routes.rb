@@ -15,4 +15,6 @@ Rails.application.routes.draw do
   delete '/containers', to: 'containers#destroy', as: 'container_delete'
 
   resources :key_pairs, except: [:edit, :update]
+
+  post '/profiles', to: 'profiles#create'
 end
