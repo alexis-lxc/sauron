@@ -9,15 +9,6 @@ class ContainersController < ApplicationController
     end
     response = container.launch
 
-    # Assign key pair if it's specified
-    unless @key_pair_name.blank?
-      # Give time for the container to start
-      # TODO: @giosakti should find more predictable way
-      sleep(5.seconds)
-      key_pair = KeyPair.find_by!(name: @key_pair_name)
-      response = Lxd.attach_public_key(@lxd_host_ipaddress, @container_hostname, key_pair.public_key)
-    end
-
     return render json: response, status: :created if response[:success] == 'true'
     render json: response, status: :internal_server_error
   end
