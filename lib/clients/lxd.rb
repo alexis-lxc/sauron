@@ -100,7 +100,7 @@ module Lxd
     begin
       response = lxd.execute_command(container_hostname,
         "bash -c 'echo \"#{public_key}\" > /home/#{username}/.ssh/authorized_keys'"
-      )    
+      )
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
@@ -112,11 +112,3 @@ module Lxd
     Hyperkit::Client.new(api_endpoint: "https://#{lxd_host_ipaddress}:8443", verify_ssl: false)
   end
 end
-
-
-
-=begin
-    `lxc launch #{image} #{lxd_hostname}:#{container_hostname}`
-curl -k     --cert ~/.config/lxc/client.crt \
-    --key ~/.config/lxc/client.key \-XGET https://172.16.7.1:8443/1.0/containers
-=end
