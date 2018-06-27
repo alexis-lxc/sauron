@@ -56,6 +56,8 @@ GEM
     commonjs (0.2.7)
     concurrent-ruby (1.0.5)
     concurrent-ruby (1.0.5-java)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
     crass (1.0.4)
     database_cleaner (1.7.0)
     devise (4.4.3)
@@ -80,6 +82,7 @@ GEM
       thor (~> 0.14)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    hashdiff (0.3.7)
     hyperkit (1.2.0)
       activesupport (>= 4.2.6)
       sawyer
@@ -184,6 +187,7 @@ GEM
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
     ruby_dep (1.5.0)
+    safe_yaml (1.0.4)
     sawyer (0.8.1)
       addressable (>= 2.3.5, < 2.6)
       faraday (~> 0.8, < 1.0)
@@ -219,8 +223,13 @@ GEM
       thread_safe (~> 0.1)
     uglifier (4.1.11)
       execjs (>= 0.3.0, < 3)
+    vcr (4.0.0)
     warden (1.2.7)
       rack (>= 1.0)
+    webmock (3.4.2)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-driver (0.6.5-java)
@@ -253,6 +262,8 @@ DEPENDENCIES
   turbolinks
   twitter-bootstrap-rails
   uglifier
+  vcr
+  webmock
 
 RUBY VERSION
    ruby 2.5.1p57

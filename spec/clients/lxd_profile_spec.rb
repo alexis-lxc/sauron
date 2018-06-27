@@ -64,11 +64,13 @@ RSpec.describe LxdProfile do
                      :name=>"default",
                      :used_by=>["/1.0/containers/test-1"]}
 
-  describe 'get' do
+  before(:each) do
+    ContainerHost.create(hostname: 'p-ubuntu-01', ipaddress: '172.16.33.33')
+  end
+
+  describe 'get', vcr: true do
     context 'success' do
       it 'should get profile details by name' do
-        ContainerHost.create(hostname: 'p-ubuntu-01', ipaddress: '10.0.0.1')
-        allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('default').and_return(get_default_profile.deep_dup)
         response = LxdProfile.get('default')
         expect(response[:success]).to eq('true')
         expect(response[:data][:profile][:config][:"user.network-config"][:version]).to eq(1)
@@ -79,11 +81,9 @@ RSpec.describe LxdProfile do
 
     context 'failure/not-found' do
       it 'should return success false with error' do
-        ContainerHost.create(hostname: 'p-ubuntu-01', ipaddress: '10.0.0.1')
-        allow_any_instance_of(Hyperkit::Client).to receive(:profile).and_raise(Hyperkit::Error.from_response({status: 404, body: 'not found'}))
-        response = LxdProfile.get('default')
+        response = LxdProfile.get('unknown')
         expect(response[:success]).to eq('false')
-        expect(response[:error]).to  eq(' : 404 - not found')
+        expect(response[:error]).to  eq('GET https://172.16.33.33:8443/1.0/profiles/unknown: 404 - Error: not found')
       end
     end
   end
@@ -91,7 +91,6 @@ RSpec.describe LxdProfile do
   describe 'create_from' do
     context 'success' do
       it 'should return success true with no errors' do
-        ContainerHost.create(hostname: 'p-ubuntu-01', ipaddress: '10.0.0.1')
         allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('default').and_return(get_default_profile.deep_dup)
         allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('new').and_return(get_new_profile.deep_dup)
         allow_any_instance_of(Hyperkit::Client).to receive(:create_profile).and_return(nil)

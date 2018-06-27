@@ -17,6 +17,8 @@ gem 'sshkey', '~> 1.9'
 gem 'jbuilder'
 
 group :development, :test do
+  gem 'webmock'
+  gem 'vcr'
   gem 'rails-controller-testing'
   gem 'database_cleaner'
   gem 'rspec-rails', '~> 3.7'
