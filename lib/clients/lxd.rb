@@ -26,8 +26,17 @@ module Lxd
     lxd = client_object(lxd_host_ipaddress)
     container_details = lxd.container(container_name)
     container_state = lxd.container_state(container_name)
-    Container.new(container_hostname: container_name, status: container_state[:status], ipaddress: container_state[:network][:eth0][:addresses].first[:address],
-                  image: container_details[:config][:"image.description"], lxc_profiles: container_details[:profiles], created_at: container_details[:created_at])
+    ipaddress = container_state[:network][:eth0][:addresses].
+      select{|x| x[:family] == 'inet'}.
+      first[:address]
+    Container.new(
+      container_hostname: container_name, 
+      status: container_state[:status], 
+      ipaddress: ipaddress,
+      image: container_details[:config][:"image.description"], 
+      lxc_profiles: container_details[:profiles], 
+      created_at: container_details[:created_at]
+    )
   end
 
   #does not honour image param, will launch 16.04 by default for now.
