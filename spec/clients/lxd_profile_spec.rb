@@ -93,10 +93,14 @@ RSpec.describe LxdProfile do
       it 'should return success true with no errors' do
         ContainerHost.create(hostname: 'p-ubuntu-01', ipaddress: '10.0.0.1')
         allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('default').and_return(get_default_profile.deep_dup)
+        allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('new').and_return(get_new_profile.deep_dup)
         allow_any_instance_of(Hyperkit::Client).to receive(:create_profile).and_return(nil)
         response = LxdProfile.create_from(from: 'default', to: 'new', overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB"})
+        new_profile = LxdProfile.get('new')
         expect(response[:success]).to eq('true')
         expect(response[:error]).to  eq('')
+        expect(new_profile[:data][:profile][:config][:"limits.cpu"]).to eq('1')
+        expect(new_profile[:data][:profile][:config][:"limits.memory"]).to eq('100MB')
       end
     end
 
