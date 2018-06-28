@@ -23,6 +23,15 @@ module LxdProfile
     return {success: 'true', error: '', data: {profile: profile}}
   end
 
+  def update(name, attributes)
+    begin
+      client_object.patch_profile(name, attributes)
+    rescue Hyperkit::Error => error
+      return {success: 'false', error: error.as_json}
+    end
+    {success: 'true', error: ''}
+  end
+
   private
 
   def string_to_yaml(input)

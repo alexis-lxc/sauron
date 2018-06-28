@@ -1,0 +1,36 @@
+---
+http_interactions:
+- request:
+    method: patch
+    uri: https://172.16.33.33:8443/1.0/profiles/random
+    body:
+      encoding: UTF-8
+      string: '{"config":{"limits.cpu":"8","limits.memory":"600MB"}}'
+    headers:
+      User-Agent:
+      - Hyperkit Ruby Gem 1.2.0
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 500
+      message: Internal Server Error
+    headers:
+      content-type:
+      - application/json
+      x-content-type-options:
+      - nosniff
+      date:
+      - Thu, 28 Jun 2018 13:18:22 GMT
+      content-length:
+      - '81'
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: "{\"error\":\"Failed to retrieve profile='random'\",\"error_code\":500,\"type\":\"error\"}\n\n"
+    http_version: 
+  recorded_at: Thu, 28 Jun 2018 13:18:22 GMT
+recorded_with: VCR 4.0.0
