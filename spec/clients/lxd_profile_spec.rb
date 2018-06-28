@@ -88,12 +88,9 @@ RSpec.describe LxdProfile do
     end
   end
 
-  describe 'create_from' do
+  describe 'create_from', :vcr do
     context 'success' do
       it 'should return success true with no errors' do
-        allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('default').and_return(get_default_profile.deep_dup)
-        allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('new').and_return(get_new_profile.deep_dup)
-        allow_any_instance_of(Hyperkit::Client).to receive(:create_profile).and_return(nil)
         response = LxdProfile.create_from(from: 'default', to: 'new', overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB"})
         new_profile = LxdProfile.get('new')
         expect(response[:success]).to eq('true')
