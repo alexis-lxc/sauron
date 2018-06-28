@@ -101,13 +101,16 @@ RSpec.describe LxdProfile do
     end
 
     context 'failure' do
-      it 'should return success false with errors' do
-        ContainerHost.create(hostname: 'p-ubuntu-01', ipaddress: '10.0.0.1')
-        allow_any_instance_of(Hyperkit::Client).to receive(:profile).with('default').and_return(get_default_profile.deep_dup)
-        allow_any_instance_of(Hyperkit::Client).to receive(:create_profile).and_raise(Hyperkit::Error.from_response({status: 400, body: 'bad request'}))
-        response = LxdProfile.create_from(from: 'default', to: 'new', overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB"})
+      it 'should return success false with errors for unknow profile' do
+        response = LxdProfile.create_from(from: 'default-random', to: 'new', overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB"})
         expect(response[:success]).to eq('false')
-        expect(response[:error]).to  eq(' : 400 - bad request')
+        expect(response[:error]).to  eq('GET https://172.16.33.33:8443/1.0/profiles/default-random: 404 - Error: not found')
+      end
+
+      it 'should return success false with errors for bad overrides' do
+        response = LxdProfile.create_from(from: 'default', to: 'new', overrides: {:"limitsssss.cpu"=>"1"})
+        expect(response[:success]).to eq('false')
+        expect(response[:error]).to  eq('POST https://172.16.33.33:8443/1.0/profiles: 400 - Error: Unknown configuration key: limitsssss.cpu')
       end
     end
   end

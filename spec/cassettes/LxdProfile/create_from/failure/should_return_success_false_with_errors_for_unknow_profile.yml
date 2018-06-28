@@ -23,7 +23,7 @@ http_interactions:
       x-content-type-options:
       - nosniff
       date:
-      - Thu, 28 Jun 2018 12:01:07 GMT
+      - Thu, 28 Jun 2018 12:27:23 GMT
       content-length:
       - '55'
       connection:
@@ -32,5 +32,5 @@ http_interactions:
       encoding: UTF-8
       string: "{\"error\":\"not found\",\"error_code\":404,\"type\":\"error\"}\n\n"
     http_version: 
-  recorded_at: Thu, 28 Jun 2018 12:01:07 GMT
+  recorded_at: Thu, 28 Jun 2018 12:27:24 GMT
 recorded_with: VCR 4.0.0
