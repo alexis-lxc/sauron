@@ -43,8 +43,7 @@ module Lxd
   def launch_container(lxd_host_ipaddress, image, container_hostname)
     create_container_response = create_container(lxd_host_ipaddress, container_hostname)
     if create_container_response[:success] == 'true'
-      response = start_container(lxd_host_ipaddress, container_hostname)
-      return response
+      StartContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname)
     end
     return create_container_response
   end
