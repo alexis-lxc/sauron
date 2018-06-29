@@ -37,16 +37,10 @@ RSpec.describe Lxd do
       end
       context 'start_container returns success true' do
         it 'should return success true' do
+          expect(StartContainer).to receive(:perform_in).with("15", container_hostname).once
           allow(Lxd).to receive(:start_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'true'})
           response = Lxd.launch_container(lxd_host_ipaddress, image,container_hostname)
           expect(response[:success]).to eq('true')
-        end
-      end
-      context 'start_container returns success false' do
-        it 'should return success false' do
-          allow(Lxd).to receive(:start_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'false'})
-          response = Lxd.launch_container(lxd_host_ipaddress, image,container_hostname)
-          expect(response[:success]).to eq('false')
         end
       end
     end
