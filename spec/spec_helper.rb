@@ -1,4 +1,5 @@
 require 'vcr'
+require 'hyperkit'
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -29,9 +30,14 @@ RSpec.configure do |config|
 
   VCR.configure do |c|
     c.cassette_library_dir     = 'spec/cassettes'
-    c.hook_into                :faraday
+    c.hook_into                :webmock
     c.default_cassette_options = { :record => :new_episodes }
     c.allow_http_connections_when_no_cassette = true
     c.configure_rspec_metadata!
+  end
+
+  lxd_client = Hyperkit::Client.new(api_endpoint: "https://172.16.33.33:8443", verify_ssl: false)
+  config.after(:each, delete_profile_after: true) do |example|
+    lxd_client.delete_profile(example.metadata[:profile_name])
   end
 end

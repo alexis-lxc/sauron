@@ -25,14 +25,17 @@ RSpec.describe LxdProfile do
     end
   end
 
-  describe 'create_from', :vcr do
+  describe 'create_from', vcr: true do
     context 'success' do
-      it 'should return success true with no errors' do
-        response = LxdProfile.create_from(from: 'default', to: 'new', overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB"})
+      it 'should return success true with no errors', :delete_profile_after, profile_name: 'new' do
+        response = LxdProfile.create_from(from: 'default', to: 'new',
+                                          overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB",
+                                                      :"ssh_authorized_keys" => ['abc', 'def']})
         new_profile = LxdProfile.get('new')
         expect(response[:success]).to eq('true')
         expect(response[:error]).to  eq('')
         expect(new_profile[:data][:profile][:config][:"limits.cpu"]).to eq('1')
+        expect(new_profile[:data][:profile][:config][:"user.user-data"][:"ssh_authorized_keys"]).to eq(['abc','def'])
         expect(new_profile[:data][:profile][:config][:"limits.memory"]).to eq('100MB')
       end
     end

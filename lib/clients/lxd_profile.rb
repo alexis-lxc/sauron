@@ -5,8 +5,9 @@ module LxdProfile
   def create_from(from: 'default', to:, overrides: {})
     begin
       from_profile = yaml_to_hash(client_object.profile(from))
+      from_profile[:config][:"user.user-data"] = from_profile[:config][:"user.user-data"].merge({ssh_authorized_keys: overrides[:"ssh_authorized_keys"]})
+      from_profile[:config] = from_profile[:config].merge(overrides.except(:"ssh_authorized_keys"))
       from_profile = string_to_yaml(from_profile)
-      from_profile[:config] = from_profile[:config].merge(overrides)
       client_object.create_profile(to, from_profile)
     rescue Hyperkit::Error => error
       return {success: 'false', error: error.as_json}
