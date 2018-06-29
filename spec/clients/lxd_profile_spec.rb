@@ -115,7 +115,7 @@ RSpec.describe LxdProfile do
     end
   end
 
-  describe 'update' do
+  describe 'update', :vcr do
     context 'success' do
       it 'should return success true for new keys added' do
         LxdProfile.create_from(from: 'default', to: 'new', overrides: {})
