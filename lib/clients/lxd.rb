@@ -56,7 +56,7 @@ module Lxd
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Success' ? 'true' : false
+    success  = response[:status] == 'Running' ? 'true' : false
     return {success: success, error: response[:err]}
   end
 
@@ -67,7 +67,7 @@ module Lxd
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Success' ? 'true' : false
+    success  = response[:status] == 'Running' ? 'true' : false
     return {success: success, error: response[:err]}
   end
 
@@ -118,6 +118,6 @@ module Lxd
   end
 
   def client_object(lxd_host_ipaddress)
-    Hyperkit::Client.new(api_endpoint: "https://#{lxd_host_ipaddress}:8443", verify_ssl: false)
+    Hyperkit::Client.new(api_endpoint: "https://#{lxd_host_ipaddress}:8443", verify_ssl: false, auto_sync: false)
   end
 end
