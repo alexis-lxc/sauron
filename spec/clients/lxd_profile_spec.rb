@@ -25,6 +25,14 @@ RSpec.describe LxdProfile do
     end
   end
 
+  describe 'get_all', :vcr do
+    it 'should return all profiles list' do
+      response = LxdProfile.get_all
+      expect(response[:success]).to eq('true')
+      expect(response[:data][:profiles]).to eq(['default'])
+    end
+  end
+
   describe 'create_from', vcr: true do
     context 'success' do
       it 'should return success true with no errors', :delete_profile_after, profile_name: 'new' do

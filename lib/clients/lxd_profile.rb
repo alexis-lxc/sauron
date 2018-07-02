@@ -15,6 +15,15 @@ module LxdProfile
     return {success: 'true', error: ''}
   end
 
+  def get_all
+    begin
+      profiles = client_object.profiles
+    rescue Hyperkit::Error => error
+      return {success: 'false', error: error.as_json}
+    end
+    return {success: 'true', error: '', data: {profiles: profiles}}
+  end
+
   def get(name)
     begin
       profile = yaml_to_hash(client_object.profile(name))
