@@ -9,29 +9,27 @@ module Lxd
     rescue StandardError => error
       return {success: false, errors: error.to_s} unless error.to_s.include? "Certificate already in trust store"
     end
-    return {success: true, errors: ''}
+    {success: true, errors: ''}
   end
 
   def list_containers
-    lxd = client_object(ContainerHost.first.ipaddress)
-    container_list = lxd.containers
-    container_list.map { |container| Container.new(container_hostname: container) }
+    container_list = client_object.containers
+    container_list.map {|container| Container.new(container_hostname: container)}
   end
 
   def show_container(container_name)
-    lxd = client_object(ContainerHost.first.ipaddress)
-    container_details = lxd.container(container_name)
-    container_state = lxd.container_state(container_name)
+    container_details = client_object.container(container_name)
+    container_state = client_object.container_state(container_name)
     ipaddress = container_state[:network][:eth0][:addresses].
-      select{|x| x[:family] == 'inet'}.
-      first[:address]
+        select {|x| x[:family] == 'inet'}.
+        first[:address]
     Container.new(
-      container_hostname: container_name, 
-      status: container_state[:status], 
-      ipaddress: ipaddress,
-      image: container_details[:config][:"image.description"], 
-      lxc_profiles: container_details[:profiles], 
-      created_at: container_details[:created_at]
+        container_hostname: container_name,
+        status: container_state[:status],
+        ipaddress: ipaddress,
+        image: container_details[:config][:"image.description"],
+        lxc_profiles: container_details[:profiles],
+        created_at: container_details[:created_at]
     )
   end
 
@@ -41,79 +39,73 @@ module Lxd
     if create_container_response[:success] == 'true'
       StartContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname)
     end
-    return create_container_response
+    create_container_response
   end
 
   def create_container(container_hostname)
     begin
-      lxd = client_object(ContainerHost.first.ipaddress)
-      response = lxd.create_container(container_hostname, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04")
+      response = client_object.create_container(container_hostname, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04")
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Running' ? 'true' : false
-    return {success: success, error: response[:err]}
+    success = response[:status] == 'Running' ? 'true' : false
+    {success: success, error: response[:err]}
   end
 
   def start_container(container_hostname)
     begin
-      lxd = client_object(ContainerHost.first.ipaddress)
-      response = lxd.start_container(container_hostname)
+      response = client_object.start_container(container_hostname)
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Running' ? 'true' : false
-    return {success: success, error: response[:err]}
+    success = response[:status] == 'Running' ? 'true' : false
+    {success: success, error: response[:err]}
   end
 
   def destroy_container(container_hostname)
-    lxd_host_ipaddress = ContainerHost.first.ipaddress
-    stop_container_response = stop_container(lxd_host_ipaddress, container_hostname)
+    stop_container_response = stop_container(container_hostname)
     if stop_container_response[:success] == 'true'
-      delete_container_response = delete_container(lxd_host_ipaddress, container_hostname)
+      delete_container_response = delete_container(container_hostname)
       return delete_container_response
     end
-    return stop_container_response
+    stop_container_response
   end
 
-  def delete_container(lxd_host_ipaddress, container_hostname)
-    lxd = client_object(lxd_host_ipaddress)
+  def delete_container(container_hostname)
     begin
-      response = lxd.delete_container(container_hostname)
+      response = client_object.delete_container(container_hostname)
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Success' ? 'true' : false
-    return {success: success, error: response[:err]}
+    success = response[:status] == 'Success' ? 'true' : false
+    {success: success, error: response[:err]}
   end
 
-  def stop_container(lxd_host_ipaddress, container_hostname)
-    lxd = client_object(lxd_host_ipaddress)
+  def stop_container(container_hostname)
     begin
-      response = lxd.stop_container(container_hostname)
+      response = client_object.stop_container(container_hostname)
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Success' ? 'true' : false
-    return {success: success, error: response[:err]}
+    success = response[:status] == 'Success' ? 'true' : false
+    {success: success, error: response[:err]}
   end
 
-  def attach_public_key(lxd_host_ipaddress, container_hostname, public_key, opts = {})
-    lxd = client_object(lxd_host_ipaddress)
+  def attach_public_key(container_hostname, public_key, opts = {})
     username = opts[:username] || 'ubuntu'
 
     begin
-      response = lxd.execute_command(container_hostname,
-        "bash -c 'echo \"#{public_key}\" > /home/#{username}/.ssh/authorized_keys'"
+      response = client_object.execute_command(container_hostname,
+                                               "bash -c 'echo \"#{public_key}\" > /home/#{username}/.ssh/authorized_keys'"
       )
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success  = response[:status] == 'Success' ? 'true' : false
-    return {success: success, error: response[:err]}
+    success = response[:status] == 'Success' ? 'true' : false
+    {success: success, error: response[:err]}
   end
 
-  def client_object(lxd_host_ipaddress)
-    Hyperkit::Client.new(api_endpoint: "https://#{lxd_host_ipaddress}:8443", verify_ssl: false, auto_sync: false)
+  def client_object(lxc_host_ipaddress = ContainerHost.first.ipaddress)
+    Hyperkit::Client.new(api_endpoint: "https://#{lxc_host_ipaddress}:8443", verify_ssl: false, auto_sync: false)
   end
 end
