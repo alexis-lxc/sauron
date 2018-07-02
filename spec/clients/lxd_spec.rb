@@ -27,33 +27,40 @@ RSpec.describe Lxd do
   end
 
   describe 'launch_container' do
-    let(:lxd_host_ipaddress) { '172.16.7.2' }
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+
     let(:container_hostname) { 'p-wallet-service-01' }
     let(:image) { 'ubuntu' }
 
     context 'create container returns success true' do
       before(:each) do
-        allow(Lxd).to receive(:create_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'true'})
+        allow(Lxd).to receive(:create_container).with(container_hostname).and_return({success: 'true'})
       end
       context 'start_container returns success true' do
         it 'should return success true' do
           expect(StartContainer).to receive(:perform_in).with("15", container_hostname).once
-          allow(Lxd).to receive(:start_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'true'})
-          response = Lxd.launch_container(lxd_host_ipaddress, image,container_hostname)
+          allow(Lxd).to receive(:start_container).with(container_hostname).and_return({success: 'true'})
+          response = Lxd.launch_container(image,container_hostname)
           expect(response[:success]).to eq('true')
         end
       end
     end
     context 'create_container returns success false' do
       it 'should not call start_container and return' do
-        allow(Lxd).to receive(:create_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'false'})
-        response = Lxd.launch_container(lxd_host_ipaddress, image,container_hostname)
+        FactoryBot.create(:container_host)
+        allow(Lxd).to receive(:create_container).with(container_hostname).and_return({success: 'false'})
+        response = Lxd.launch_container(image,container_hostname)
         expect(response[:success]).to eq('false')
       end
     end
   end
 
   describe 'create_container' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
     let(:lxd_host_ipaddress) { '172.16.7.2' }
     let(:container_name) { 'p-wallet-service-01' }
 
@@ -70,7 +77,7 @@ RSpec.describe Lxd do
                              :may_cancel=>false,
                              :err=>""}
         allow_any_instance_of(Hyperkit::Client).to receive(:create_container).with(container_name, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04").and_return(expected_response)
-        response = Lxd.create_container(lxd_host_ipaddress, container_name)
+        response = Lxd.create_container(container_name)
         expect(response[:success]).to eq('true')
         expect(response[:error]).to eq('')
       end
@@ -79,14 +86,16 @@ RSpec.describe Lxd do
       it 'should return the error message if creation fails with success as false' do
         expected_response = Hyperkit::Error.new()
         allow_any_instance_of(Hyperkit::Client).to receive(:create_container).with(container_name, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04").and_raise(expected_response)
-        response = Lxd.create_container(lxd_host_ipaddress, container_name)
+        response = Lxd.create_container(container_name)
         expect(response[:success]).to eq(false)
       end
     end
   end
 
   describe 'start_container' do
-    let(:lxd_host_ipaddress) { '172.16.7.2' }
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
     let(:container_name) { 'p-wallet-service-01' }
 
     context 'success' do
@@ -102,22 +111,26 @@ RSpec.describe Lxd do
                              :may_cancel=>false,
                              :err=>""}
         allow_any_instance_of(Hyperkit::Client).to receive(:start_container).with(container_name).and_return(expected_response)
-        response = Lxd.start_container(lxd_host_ipaddress, container_name)
+        response = Lxd.start_container(container_name)
         expect(response[:success]).to eq('true')
         expect(response[:error]).to eq('')
       end
     end
     context 'failure' do
       it 'should return the error if start container fails' do
-        expected_response = Hyperkit::Error.new()
+        expected_response = Hyperkit::Error.new
         allow_any_instance_of(Hyperkit::Client).to receive(:start_container).with(container_name).and_raise(expected_response)
-        response = Lxd.start_container(lxd_host_ipaddress, container_name)
+        response = Lxd.start_container(container_name)
         expect(response[:success]).to eq(false)
       end
     end
   end
 
   describe 'show container' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+
     it 'should call hyperkit container and container_state and return specific details' do
       container_name = 'p-user-service-lxc-05'
       container_state = {:status=>"Running", :status_code=>103, :disk=>{}, :memory=> {:usage=>42934272, :usage_peak=>154955776, :swap_usage=>0,
@@ -183,7 +196,7 @@ RSpec.describe Lxd do
       allow_any_instance_of(Hyperkit::Client).to receive(:container).with(container_name).and_return(container_details)
       allow_any_instance_of(Hyperkit::Client).to receive(:container_state).with(container_name).and_return(container_state)
 
-      container = Lxd.show_container('172.16.7.2','p-user-service-lxc-05')
+      container = Lxd.show_container('p-user-service-lxc-05')
       expect(container.ipaddress).to eq('240.7.1.113')
       expect(container.status).to eq('Running')
       expect(container.container_hostname).to eq('p-user-service-lxc-05')
@@ -193,6 +206,10 @@ RSpec.describe Lxd do
   end
 
   describe 'stop_container' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+
     it 'should take a container_name & host_ipaddress and stop a container' do
       container_name = 'p-wallet-service-01'
       container_stop_details= {:id=>"0a2dbdc0-add9-4031-8e4e-ea1549c81f7c",
@@ -221,6 +238,10 @@ RSpec.describe Lxd do
   end
 
   describe 'delete_container' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+
     it 'should take a container_name & host_ipaddress and delete a container' do
       container_name = 'p-wallet-service-01'
       container_delete_details = {:id=>"4b0888ab-e265-4ed2-82ef-167edface5e2",
@@ -249,7 +270,10 @@ RSpec.describe Lxd do
   end
 
   describe 'destroy_container' do
-    let(:lxd_host_ipaddress) { '172.16.7.2' }
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+    let(:lxd_host_ipaddress) { ContainerHost.first.ipaddress }
     let(:container_hostname) { 'p-wallet-service-01' }
 
     context 'stop_container returns success true' do
@@ -259,14 +283,14 @@ RSpec.describe Lxd do
       context 'delete_container returns success true' do
         it 'should return success true' do
           allow(Lxd).to receive(:delete_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'true'})
-          response = Lxd.destroy_container(lxd_host_ipaddress, container_hostname)
+          response = Lxd.destroy_container(container_hostname)
           expect(response[:success]).to eq('true')
         end
       end
       context 'delete_container returns success false' do
         it 'should return success false' do
           allow(Lxd).to receive(:delete_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'false', error: 'bad request'})
-          response = Lxd.destroy_container(lxd_host_ipaddress, container_hostname)
+          response = Lxd.destroy_container(container_hostname)
           expect(response[:success]).to eq('false')
           expect(response[:error]).to eq('bad request')
         end
@@ -276,7 +300,7 @@ RSpec.describe Lxd do
       it 'should not call delete_container and return' do
         allow(Lxd).to receive(:stop_container).with(lxd_host_ipaddress, container_hostname).and_return({success: 'false', error: 'not found'})
         expect(Lxd).not_to receive(:delete_container)
-        response = Lxd.destroy_container(lxd_host_ipaddress, container_hostname)
+        response = Lxd.destroy_container(container_hostname)
         expect(response[:success]).to eq('false')
         expect(response[:error]).to eq('not found')
       end
@@ -284,7 +308,10 @@ RSpec.describe Lxd do
   end
 
   describe 'attach_public_key' do
-    let(:lxd_host_ipaddress) { '127.0.0.1' }
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+    let(:lxd_host_ipaddress) { ContainerHost.first.ipaddress }
     let(:container_hostname) { 'localhost' }
 
     context 'attach_public_key returns success true' do
