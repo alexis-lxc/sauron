@@ -17,4 +17,5 @@ Rails.application.routes.draw do
   resources :key_pairs, except: [:edit, :update]
 
   post '/profiles', to: 'profiles#create'
+  get '/profiles', to: 'profiles#index'
 end
