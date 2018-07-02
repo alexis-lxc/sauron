@@ -23,13 +23,6 @@
     <%= f.error_span(:container_hostname) %>
   </div>
   <div class="form-group">
-    <%= f.label :lxd_host_ipaddress, :class => 'control-label col-md-2' %>
-    <div class="col-md-6">
-      <%= f.text_field :lxd_host_ipaddress, :class => 'form-control', :placeholder => 'IP Address Eg: 11.14.15.16'  %>
-    </div>
-    <%= f.error_span(:lxd_host_ipaddress) %>
-  </div>
-  <div class="form-group">
     <%= f.label :key_pair, :class => 'control-label col-md-2' %>
     <div class="col-md-6">
       <%= f.select :key_pair_name, @key_pairs.collect{ |p| [ p.name, p.name ] }, include_blank: t('specify_key_pair', :default => t("specify_key_pair")) %>
