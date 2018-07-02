@@ -1,0 +1,20 @@
+<%- model_class = Profile -%>
+<div class="page-header">
+  <h2><%=t '.title', :default => model_class.model_name.human.pluralize.titleize, class:'sub-header' %></h2>
+</div>
+<div class="table-responsive">
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:name) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @profiles.each do |profile| %>
+      <tr>
+        <td><%= profile %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

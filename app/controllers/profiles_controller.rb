@@ -13,4 +13,8 @@ class ProfilesController < ApplicationController
     end
     render json: {success: true, errors: ''}, status: :created
   end
+
+  def index
+    @profiles = LxdProfile.get_all[:data][:profiles]
+  end
 end
