@@ -13,11 +13,11 @@ RSpec.describe Profile do
       it 'should transform attributes to LXD valid attrs', :delete_profile_after, profile_name: 'new-profile' do
         profile = Profile.new(name: 'new-profile', cpu_limit: '1', memory_limit: '100MB', ssh_authorized_keys: ['abc','def'])
         response = profile.create
-        expect(response[:success]).to eq('true')
-        expect(response[:error]).to  eq('')
-        profile = LxdProfile.get('new-profile')
-        expect(profile[:data][:profile][:config][:"limits.cpu"]).to eq('1')
-        expect(profile[:data][:profile][:config][:"limits.memory"]).to eq('100MB')
+        expect(response).to eq(true)
+        profile_get = LxdProfile.get('new-profile')
+        expect(profile.errors.full_messages.join(',')).to  eq('')
+        expect(profile_get[:data][:profile][:config][:"limits.cpu"]).to eq('1')
+        expect(profile_get[:data][:profile][:config][:"limits.memory"]).to eq('100MB')
       end
     end
 
@@ -25,8 +25,8 @@ RSpec.describe Profile do
       it 'should return error if name is not set' do
         profile = Profile.new(name: '', cpu_limit: '', memory_limit: '100MB', ssh_authorized_keys: ['abc','def'])
         response = profile.create
-        expect(response[:success]).to eq('false')
-        expect(response[:error]).to  eq('POST https://172.16.33.33:8443/1.0/profiles: 400 - Error: No name provided')
+        expect(response).to eq(false)
+        expect(profile.errors.full_messages.join(',')).to  eq('Response POST https://172.16.33.33:8443/1.0/profiles: 400 - Error: No name provided')
       end
     end
   end
