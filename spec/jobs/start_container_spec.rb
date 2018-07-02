@@ -7,8 +7,8 @@ RSpec.describe StartContainer do
 
   before(:each) do
     Sidekiq::Worker.clear_all
-    container_host_1 = FactoryBot.create(:container_host)
-    container_host_2 = FactoryBot.create(:container_host)
+    FactoryBot.create(:container_host)
+    FactoryBot.create(:container_host)
   end
 
   describe 'Start container worker' do
