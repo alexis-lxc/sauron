@@ -17,6 +17,18 @@ class Profile
     return true
   end
 
+  def get
+    response = LxdProfile.get(self.name)
+    if response[:success] == 'false'
+      self.errors.add(:response, response[:error])
+      return self
+    end
+    self.assign_attributes(cpu_limit: response[:data][:profile][:config][:"limits.cpu"],
+                            memory_limit: response[:data][:profile][:config][:"limits.memory"],
+                            ssh_authorized_keys: response[:data][:profile][:config][:"user.user-data"][:ssh_authorized_keys])
+    return self
+  end
+
   def memory_limit_format
     if memory_limit.present? && /^[1-9][0-9]*($|kB|MB|GB|TB|EB)$/.match(memory_limit).nil?
       errors.add(:memory_limit, "Memory limit should be positive % or have suffix one of kB, MB, GB TB, PB or EB")
