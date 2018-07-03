@@ -13,6 +13,9 @@
     <% @profiles.each do |profile| %>
       <tr>
         <td><%= profile %></td>
+        <td>
+        <%= link_to t('.show'), profile_path(:name => profile), :class => 'btn btn-primary btn-sm' %>
+        </td>
       </tr>
     <% end %>
   </tbody>
