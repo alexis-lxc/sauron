@@ -22,7 +22,7 @@
         <td><%=l container_host.created_at %></td>
         <td>
           <%= link_to t('.containers', :default => t("helpers.links.containers")),
-            containers_path(:lxd_host_ipaddress => container_host.ipaddress, :lxd_hostname => container_host.hostname) %>
+            containers_path(:lxd_host_ipaddress => container_host.ipaddress) %>
       </td>
       </tr>
     <% end %>

@@ -17,9 +17,9 @@
         <%= link_to t('.back', :default => t("helpers.links.back")),
           container_hosts_path(), :class => 'btn btn-info btn-sm' %>
         <%= link_to t('.show', :default => t("helpers.links.show")),
-          container_path(:lxd_host_ipaddress => container.lxd_host_ipaddress, :container_hostname => container.container_hostname), :class => 'btn btn-primary btn-sm' %>
+          container_path(:container_hostname => container.container_hostname), :class => 'btn btn-primary btn-sm' %>
         <%= link_to t('.delete', :default => t("helpers.links.delete")),
-          container_delete_path(:lxd_host_ipaddress => container.lxd_host_ipaddress, :container_hostname => container.container_hostname), method: :delete, :class => 'btn btn-danger btn-sm' %>
+          container_delete_path(:container_hostname => container.container_hostname), method: :delete, :class => 'btn btn-danger btn-sm' %>
         </td>
       </tr>
     <% end %>
