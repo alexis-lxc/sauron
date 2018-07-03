@@ -14,4 +14,12 @@ RSpec.describe ProfilesController  do
       :action => 'index'
     )
   end
+
+  it 'routes GET /profile/default to profiles#show' do
+    expect(:get => '/profile/default').to route_to(
+      :controller => 'profiles',
+      :action => 'show',
+      :name => 'default'
+    )
+  end
 end
