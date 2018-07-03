@@ -26,7 +26,6 @@ group :development, :test do
   gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers.git', branch: 'rails-5'
   gem 'pry'
   gem 'factory_bot_rails'
-  gem 'rspec-sidekiq'
 end
 
 # Added at 2018-03-19 15:01:41 +0530 by akashdeepsingh:

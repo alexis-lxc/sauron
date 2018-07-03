@@ -195,9 +195,6 @@ GEM
       rspec-expectations (~> 3.7.0)
       rspec-mocks (~> 3.7.0)
       rspec-support (~> 3.7.0)
-    rspec-sidekiq (3.0.3)
-      rspec-core (~> 3.0, >= 3.0.0)
-      sidekiq (>= 2.4.0)
     rspec-support (3.7.1)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
@@ -273,7 +270,6 @@ DEPENDENCIES
   rails (~> 5.1.5)
   rails-controller-testing
   rspec-rails (~> 3.7)
-  rspec-sidekiq
   shoulda-matchers!
   sidekiq
   sshkey (~> 1.9)

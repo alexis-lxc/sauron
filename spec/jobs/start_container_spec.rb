@@ -3,8 +3,6 @@ require 'sidekiq/testing'
 require 'spec_helper'
 
 RSpec.describe StartContainer do
-  Sidekiq::Testing.fake!
-
   before(:each) do
     Sidekiq::Worker.clear_all
     FactoryBot.create(:container_host)
