@@ -3,7 +3,7 @@ module Lxd
   extend self
 
   def add_remote(lxd_host_ipaddress)
-    lxd = client_object(lxd_host_ipaddress)
+    lxd = client(lxd_host_ipaddress)
     begin
       lxd.create_certificate(File.read(lxd.client_cert), password: 'ubuntu')
     rescue StandardError => error
@@ -13,13 +13,13 @@ module Lxd
   end
 
   def list_containers
-    container_list = client_object.containers
+    container_list = client.containers
     container_list.map {|container| Container.new(container_hostname: container)}
   end
 
   def show_container(container_name)
-    container_details = client_object.container(container_name)
-    container_state = client_object.container_state(container_name)
+    container_details = client.container(container_name)
+    container_state = client.container_state(container_name)
     ipaddress = container_state[:network][:eth0][:addresses].
         select {|x| x[:family] == 'inet'}.
         first[:address]
@@ -44,7 +44,7 @@ module Lxd
 
   def create_container(container_hostname)
     begin
-      response = client_object.create_container(container_hostname, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04")
+      response = client.create_container(container_hostname, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04")
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
@@ -54,7 +54,7 @@ module Lxd
 
   def start_container(container_hostname)
     begin
-      response = client_object.start_container(container_hostname)
+      response = client.start_container(container_hostname)
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
@@ -73,7 +73,7 @@ module Lxd
 
   def delete_container(container_hostname)
     begin
-      response = client_object.delete_container(container_hostname)
+      response = client.delete_container(container_hostname)
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
@@ -83,7 +83,7 @@ module Lxd
 
   def stop_container(container_hostname)
     begin
-      response = client_object.stop_container(container_hostname)
+      response = client.stop_container(container_hostname)
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
@@ -95,8 +95,8 @@ module Lxd
     username = opts[:username] || 'ubuntu'
 
     begin
-      response = client_object.execute_command(container_hostname,
-                                               "bash -c 'echo \"#{public_key}\" > /home/#{username}/.ssh/authorized_keys'"
+      response = client.execute_command(container_hostname,
+                                        "bash -c 'echo \"#{public_key}\" > /home/#{username}/.ssh/authorized_keys'"
       )
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
@@ -105,7 +105,7 @@ module Lxd
     {success: success, error: response[:err]}
   end
 
-  def client_object(lxc_host_ipaddress = ContainerHost.first.ipaddress)
+  def client(lxc_host_ipaddress = ContainerHost.first.ipaddress)
     Hyperkit::Client.new(api_endpoint: "https://#{lxc_host_ipaddress}:8443", verify_ssl: false, auto_sync: false)
   end
 end
