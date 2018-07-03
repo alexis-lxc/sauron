@@ -7,14 +7,18 @@ class StartContainer
   end
 
   def perform(container_name)
-    container = Lxd.client_object.container(container_name)
+    container = client.container(container_name)
     start_interval = Time.now - container[:created_at]
     if start_interval > Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER.to_i
       if container[:status] != "Running"
-        Lxd.client_object.start_container(container_name)
+        client.start_container(container_name)
       end
     else
       raise Exception.new("Container #{container_name} is still being created")
     end
+  end
+
+  def client
+    Lxd.client
   end
 end
