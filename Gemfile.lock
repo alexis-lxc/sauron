@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:akashkahlon/hyperkit.git
+  remote: https://github.com/akashkahlon/hyperkit.git
   revision: 3d828d603cb46eecff9e917e76e2162a1e3b8ceb
   branch: add-profiles-patch
   specs:
