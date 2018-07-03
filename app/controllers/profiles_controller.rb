@@ -17,4 +17,8 @@ class ProfilesController < ApplicationController
   def index
     @profiles = LxdProfile.get_all[:data][:profiles]
   end
+
+  def show
+    @profile = Profile.new(name: params[:name]).get
+  end
 end

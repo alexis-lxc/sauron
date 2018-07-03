@@ -1,0 +1,25 @@
+<%- model_class = Profile -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
+<div>
+  <h3>
+    <% if @profile.errors.present? %>
+      <dd> <%= @profile.errors.full_messages.join(',')%> </dd>
+    <% end %>
+  </h3>
+</div>
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:name) %>:</strong></dt>
+  <dd><%= @profile.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:cpu_limit) %>:</strong></dt>
+  <dd><%= @profile.cpu_limit %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:memory_limit) %>:</strong></dt>
+  <dd><%= @profile.memory_limit %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:ssh_authorized_keys) %>:</strong></dt>
+  <% if @profile.ssh_authorized_keys.present? %>
+    <% @profile.ssh_authorized_keys.each do |key| %>
+      <dd><%= key %></dd>
+    <% end %>
+  <% end %>
+</dl>

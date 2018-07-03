@@ -40,8 +40,21 @@ RSpec.describe ProfilesController, type: :controller do
   describe 'GET#index' do
     context 'success', :vcr do
       it 'should return list of profiles' do
-        response = ProfilesController.new.index
-        expect(response).to eq(['default'])
+        get :index
+        expect(assigns(:profiles)).to eq(['default'])
+      end
+    end
+  end
+
+  describe 'GET#show' do
+    context 'success', :vcr do
+      it 'should return details of a profile', :delete_profile_after, profile_name: 'new-profile' do
+        LxdProfile.create_from(to: 'new-profile', overrides: {ssh_authorized_keys: ['abc','def'], "limits.cpu": '2', "limits.memory": '10GB'})
+        get :show, params: {name: 'new-profile'}
+        expect(assigns(:profile).name).to eq('new-profile')
+        expect(assigns(:profile).cpu_limit).to eq('2')
+        expect(assigns(:profile).memory_limit).to eq('10GB')
+        expect(assigns(:profile).ssh_authorized_keys).to eq(['abc','def'])
       end
     end
   end
