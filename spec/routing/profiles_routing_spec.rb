@@ -22,4 +22,12 @@ RSpec.describe ProfilesController  do
       :name => 'default'
     )
   end
+
+  it 'routes PATCH /profile/default to profiles#update' do
+    expect(:patch => '/profile/default').to route_to(
+      :controller => 'profiles',
+      :action => 'update',
+      :name => 'default'
+    )
+  end
 end
