@@ -1,0 +1,36 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://172.16.33.33:8443/1.0/profiles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Hyperkit Ruby Gem 1.2.0
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 03 Jul 2018 05:54:35 GMT
+      Content-Length:
+      - '131'
+    body:
+      encoding: UTF-8
+      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":["/1.0/profiles/default"]}
+
+'
+    http_version: 
+  recorded_at: Tue, 03 Jul 2018 05:54:30 GMT
+recorded_with: VCR 4.0.0

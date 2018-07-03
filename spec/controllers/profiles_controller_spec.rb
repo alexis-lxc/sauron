@@ -38,10 +38,11 @@ RSpec.describe ProfilesController, type: :controller do
   end
 
   describe 'GET#index' do
-    it 'should return list of profiles' do
-      response = ProfilesController.new.index
-
-      expect(response).to eq(['default'])
+    context 'success', :vcr do
+      it 'should return list of profiles' do
+        response = ProfilesController.new.index
+        expect(response).to eq(['default'])
+      end
     end
   end
 end
