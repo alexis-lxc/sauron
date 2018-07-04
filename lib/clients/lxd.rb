@@ -65,20 +65,9 @@ module Lxd
   def destroy_container(container_hostname)
     stop_container_response = stop_container(container_hostname)
     if stop_container_response[:success] == 'true'
-      delete_container_response = delete_container(container_hostname)
-      return delete_container_response
+      DeleteContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname)
     end
     stop_container_response
-  end
-
-  def delete_container(container_hostname)
-    begin
-      response = client.delete_container(container_hostname)
-    rescue Hyperkit::Error => error
-      return {success: false, error: error.as_json}
-    end
-    success = response[:status] == 'Success' ? 'true' : false
-    {success: success, error: response[:err]}
   end
 
   def stop_container(container_hostname)
@@ -87,7 +76,7 @@ module Lxd
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success = response[:status] == 'Success' ? 'true' : false
+    success = response[:status] == 'Running' ? 'true' : false
     {success: success, error: response[:err]}
   end
 

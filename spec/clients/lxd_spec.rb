@@ -220,7 +220,7 @@ RSpec.describe Lxd do
                                :class => "task",
                                :created_at => '2018-04-03 17:33:46 +0700',
                                :updated_at => '2018-04-03 17:33:46 +0700',
-                               :status => "Success",
+                               :status => "Running",
                                :status_code => 200,
                                :resources => {:containers => ["/1.0/containers/p-wallet-service-01"]},
                                :metadata => nil,
@@ -241,38 +241,6 @@ RSpec.describe Lxd do
     end
   end
 
-  describe 'delete_container' do
-    before(:each) do
-      FactoryBot.create(:container_host)
-    end
-
-    it 'should take a container_name & host_ipaddress and delete a container' do
-      container_name = 'p-wallet-service-01'
-      container_delete_details = {:id => "4b0888ab-e265-4ed2-82ef-167edface5e2",
-                                  :class => "task",
-                                  :created_at => '2018-04-03 18:00:19 +0700',
-                                  :updated_at => '2018-04-03 18:00:19 +0700',
-                                  :status => "Success",
-                                  :status_code => 200,
-                                  :resources => {:containers => ["/1.0/containers/p-wallet-service-01"]},
-                                  :metadata => nil,
-                                  :may_cancel => false,
-                                  :err => ""}
-      allow_any_instance_of(Hyperkit::Client).to receive(:delete_container).with(container_name).and_return(container_delete_details)
-      response = Lxd.delete_container(container_name)
-      expect(response[:success]).to be_truthy
-      expect(response[:error]).to eq('')
-    end
-
-    it 'should return error if client fails' do
-      container_name = 'p-wallet-service-01'
-      allow_any_instance_of(Hyperkit::Client).to receive(:delete_container).with(container_name).and_raise(Hyperkit::Error.from_response({status: 404, body: 'not found'}))
-      response = Lxd.delete_container(container_name)
-      expect(response[:success]).to be_falsey
-      expect(response[:error]).to eq(' : 404 - not found')
-    end
-  end
-
   describe 'destroy_container' do
     before(:each) do
       FactoryBot.create(:container_host)
@@ -281,32 +249,25 @@ RSpec.describe Lxd do
     let(:container_hostname) {'p-wallet-service-01'}
 
     context 'stop_container returns success true' do
-      before(:each) do
-        allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'true'})
-      end
       context 'delete_container returns success true' do
         it 'should return success true' do
-          allow(Lxd).to receive(:delete_container).with(container_hostname).and_return({success: 'true'})
+          allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'true'})
+
+          expect(DeleteContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname).once
           response = Lxd.destroy_container(container_hostname)
           expect(response[:success]).to eq('true')
         end
       end
       context 'delete_container returns success false' do
         it 'should return success false' do
-          allow(Lxd).to receive(:delete_container).with(container_hostname).and_return({success: 'false', error: 'bad request'})
+          allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'false', error: 'bad request'})
+
+          expect(DeleteContainer).not_to receive(:perform_in)
           response = Lxd.destroy_container(container_hostname)
+
           expect(response[:success]).to eq('false')
           expect(response[:error]).to eq('bad request')
         end
-      end
-    end
-    context 'stop_container returns success false' do
-      it 'should not call delete_container and return' do
-        allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'false', error: 'not found'})
-        expect(Lxd).not_to receive(:delete_container)
-        response = Lxd.destroy_container(container_hostname)
-        expect(response[:success]).to eq('false')
-        expect(response[:error]).to eq('not found')
       end
     end
   end
