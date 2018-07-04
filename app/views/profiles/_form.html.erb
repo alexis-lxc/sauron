@@ -1,0 +1,57 @@
+<%= form_for @profile, :html => { :class => "form-horizontal container" } do |f| %>
+
+  <% if @profile.errors.any? %>
+    <div id="error_expl" class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= pluralize(@profile.errors.count, "error") %> prohibited this profile from being saved:</h3>
+      </div>
+      <div class="panel-body">
+        <ul>
+        <% @profile.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, :class => 'control-label col-lg-2' %>
+    <div class="col-lg-10">
+      <%= f.text_field :name, :class => 'form-control' %>
+    </div>
+    <%=f.error_span(:name) %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :cpu_limit, :class => 'control-label col-lg-2' %>
+    <div class="col-lg-10">
+      <%= f.text_field :cpu_limit, :class => 'form-control' %>
+    </div>
+    <%=f.error_span(:cpu_limit) %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :memory_limit, :class => 'control-label col-lg-2' %>
+    <div class="col-lg-10">
+      <%= f.text_field :memory_limit, :class => 'form-control', placeholder: 'should have suffix one of kB, MB, GB - OR it will be taken as %' %>
+    </div>
+    <%=f.error_span(:memory_limit) %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :ssh_authorized_keys, :class => 'control-label col-lg-2' %>
+    <div class="col-lg-10">
+      <%= f.text_area :ssh_authorized_keys, :class => 'form-control', placeholder: 'If left empty it there will be no ssh keys' %>
+    </div>
+    <%=f.error_span(:ssh_authorized_keys) %>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-offset-2 col-lg-10">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel'), profiles_path, :class => 'btn btn-default' %>
+    </div>
+  </div>
+
+<% end %>

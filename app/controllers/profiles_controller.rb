@@ -21,4 +21,9 @@ class ProfilesController < ApplicationController
   def show
     @profile = Profile.new(name: params[:name]).get
   end
+
+  def new
+    @profile = Profile.new
+  end
+
 end

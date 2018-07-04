@@ -1,6 +1,9 @@
 <%- model_class = Profile -%>
 <div class="page-header">
-  <h2><%=t '.title', :default => model_class.model_name.human.pluralize.titleize, class:'sub-header' %></h2>
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize, class:'sub-header' %></h1>
+</div>
+<div class="pull-right">
+  <%= link_to t('.new'), profile_new_path, :class => 'btn btn-primary btn-sm' %>
 </div>
 <div class="table-responsive">
   <table class="table table-striped">
