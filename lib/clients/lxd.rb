@@ -94,17 +94,8 @@ module Lxd
     {success: success, error: response[:err]}
   end
 
-  def client(lxd_host_ipaddress = first_healthy_node)
-    if lxd_host_ipaddress.nil?
-      raise Exception.new(msg='No Healthy LXD Cluster nodes available. Please try after adding a new node')
-    end
+  def client(lxd_host_ipaddress = ContainerHost.reachable_node)
     Hyperkit::Client.new(api_endpoint: "https://#{lxd_host_ipaddress}:8443", verify_ssl: false, auto_sync: false)
   end
 
-  private
-
-  def first_healthy_node
-    host = ContainerHost.all.find { |host| host.reachable? }
-    host.ipaddress unless host.nil?
-  end
 end

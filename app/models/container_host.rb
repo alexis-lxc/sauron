@@ -12,9 +12,18 @@ class ContainerHost < ActiveRecord::Base
     return self
   end
 
+  def self.reachable_node
+    host = ContainerHost.find { |host| host.reachable? }
+    if host.nil?
+      raise Exception.new(msg='No Healthy LXD Cluster nodes available. Please try after adding a new node')
+    end
+    host.ipaddress
+  end
+
   def reachable?
     begin
-       !lxd_client.operations.nil?
+      lxd_client = Hyperkit::Client.new(api_endpoint: "https://#{self.ipaddress}:8443", verify_ssl: false, auto_sync: false)
+      !lxd_client.operations.nil?
     rescue Exception => error
       false
     end
@@ -27,8 +36,5 @@ class ContainerHost < ActiveRecord::Base
     @already_exists
   end
 
-  def lxd_client
-    Hyperkit::Client.new(api_endpoint: "https://#{self.ipaddress}:8443", verify_ssl: false, auto_sync: false)
-  end
 
 end

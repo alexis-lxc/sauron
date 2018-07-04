@@ -59,4 +59,35 @@ RSpec.describe ContainerHost do
      expect(response.already_exists).to be_truthy
    end
   end
+
+  describe 'client' do
+    before(:each) do
+      ContainerHost.destroy_all
+      FactoryBot.create(:container_host)
+      FactoryBot.create(:container_host)
+    end
+
+    context 'create client object' do
+      it 'should create client with first healthy node' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:operations).and_return([])
+        expect(ContainerHost.reachable_node).to eq(ContainerHost.first.ipaddress)
+      end
+
+      it 'should create client with next healthy node when first node fails' do
+        first_container_host = double(ContainerHost, ipaddress: '1.1.1.1')
+        second_container_host = double(ContainerHost, ipaddress: '2.2.2.2')
+        allow(ContainerHost).to receive(:all).and_return([first_container_host, second_container_host])
+        expect(first_container_host).to receive(:reachable?).and_return(false)
+        expect(second_container_host).to receive(:reachable?).and_return(true)
+        expect(ContainerHost.reachable_node).to eq(ContainerHost.second.ipaddress)
+      end
+
+      it 'should not create client when no healthy node present in cluster' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:operations).and_raise(Exception.new)
+        expect {
+          ContainerHost.reachable_node
+        }.to raise_error('No Healthy LXD Cluster nodes available. Please try after adding a new node')
+      end
+    end
+  end
 end
