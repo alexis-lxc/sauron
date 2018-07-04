@@ -15,16 +15,16 @@ RSpec.describe ProfilesController  do
     )
   end
 
-  it 'routes GET /profile/default to profiles#show' do
-    expect(:get => '/profile/default').to route_to(
+  it 'routes GET /profiles/default to profiles#show' do
+    expect(:get => '/profiles/default').to route_to(
       :controller => 'profiles',
       :action => 'show',
       :name => 'default'
     )
   end
 
-  it 'routes PATCH /profile/default to profiles#update' do
-    expect(:patch => '/profile/default').to route_to(
+  it 'routes PATCH /profiles/default to profiles#update' do
+    expect(:patch => '/profiles/default').to route_to(
       :controller => 'profiles',
       :action => 'update',
       :name => 'default'
