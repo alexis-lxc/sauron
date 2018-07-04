@@ -12,10 +12,23 @@ class ContainerHost < ActiveRecord::Base
     return self
   end
 
+  def reachable?
+    begin
+       !lxd_client.operations.nil?
+    rescue Exception => error
+      false
+    end
+  end
+
   private
 
   def record_exists?
     @already_exists = ContainerHost.find_by(hostname: self.hostname, ipaddress: self.ipaddress).present?
     @already_exists
   end
+
+  def lxd_client
+    Hyperkit::Client.new(api_endpoint: "https://#{self.ipaddress}:8443", verify_ssl: false, auto_sync: false)
+  end
+
 end

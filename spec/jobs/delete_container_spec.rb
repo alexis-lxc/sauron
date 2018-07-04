@@ -7,6 +7,7 @@ RSpec.describe DeleteContainer do
     Sidekiq::Worker.clear_all
     FactoryBot.create(:container_host)
     FactoryBot.create(:container_host)
+    allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
   end
 
   describe 'Delete container worker' do

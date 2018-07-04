@@ -5,6 +5,7 @@ RSpec.describe Lxd do
   describe 'add_remote' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
 
     it 'should create clients certificate on lxd host server' do
@@ -33,6 +34,7 @@ RSpec.describe Lxd do
   describe 'launch_container' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
 
     let(:container_hostname) {'p-wallet-service-01'}
@@ -64,7 +66,9 @@ RSpec.describe Lxd do
   describe 'create_container' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
+
     let(:lxd_host_ipaddress) {'172.16.7.2'}
     let(:container_name) {'p-wallet-service-01'}
 
@@ -99,6 +103,7 @@ RSpec.describe Lxd do
   describe 'start_container' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
     let(:container_name) {'p-wallet-service-01'}
 
@@ -133,6 +138,7 @@ RSpec.describe Lxd do
   describe 'show container' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
 
     it 'should call hyperkit container and container_state and return specific details' do
@@ -212,6 +218,7 @@ RSpec.describe Lxd do
   describe 'stop_container' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
 
     it 'should take a container_name & host_ipaddress and stop a container' do
@@ -244,6 +251,7 @@ RSpec.describe Lxd do
   describe 'destroy_container' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
     let(:lxd_host_ipaddress) {ContainerHost.first.ipaddress}
     let(:container_hostname) {'p-wallet-service-01'}
@@ -275,6 +283,7 @@ RSpec.describe Lxd do
   describe 'attach_public_key' do
     before(:each) do
       FactoryBot.create(:container_host)
+      allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
     end
     let(:lxd_host_ipaddress) {ContainerHost.first.ipaddress}
     let(:container_hostname) {'localhost'}
@@ -297,6 +306,38 @@ RSpec.describe Lxd do
         response = Lxd.attach_public_key(lxd_host_ipaddress, container_hostname, 'public_key')
         expect(response[:success]).to eq('false')
         expect(response[:error]).to eq('bad request')
+      end
+    end
+  end
+
+
+  describe 'client' do
+    before(:each) do
+      ContainerHost.destroy_all
+      FactoryBot.create(:container_host)
+      FactoryBot.create(:container_host)
+    end
+
+    context 'create client object' do
+      it 'should create client with first healthy node' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:operations).and_return([])
+        expect(Lxd.client.api_endpoint.include? ContainerHost.first.ipaddress).to be_truthy
+      end
+
+      it 'should create client with next healthy node when first node fails' do
+        first_container_host = double(ContainerHost, ipaddress: '1.1.1.1')
+        second_container_host = double(ContainerHost, ipaddress: '2.2.2.2')
+        allow(ContainerHost).to receive(:all).and_return([first_container_host, second_container_host])
+        expect(first_container_host).to receive(:reachable?).and_return(false)
+        expect(second_container_host).to receive(:reachable?).and_return(true)
+        expect(Lxd.client.api_endpoint.include? ContainerHost.second.ipaddress).to be_truthy
+      end
+
+      it 'should not create client when no healthy node present in cluster' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:operations).and_return(nil)
+        expect {
+          Lxd.client
+        }.to raise_error('No Healthy LXD Cluster nodes available. Please try after adding a new node')
       end
     end
   end

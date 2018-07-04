@@ -7,6 +7,7 @@ RSpec.describe StartContainer do
     Sidekiq::Worker.clear_all
     FactoryBot.create(:container_host)
     FactoryBot.create(:container_host)
+    allow_any_instance_of(ContainerHost).to receive(:reachable?).and_return(true)
   end
 
   describe 'Start container worker' do
