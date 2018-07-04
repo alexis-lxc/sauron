@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   post '/profiles', to: 'profiles#create', as: 'profiles_create'
   get '/profiles', to: 'profiles#index', as: 'profiles'
   get '/profiles/new', to: 'profiles#new', as: 'profile_new'
+  get '/profiles/:name/edit', to: 'profiles#edit', as: 'profile_edit'
   #this route will conflict with get show, when :name is 'new'. i.e. someone making a get call on profile named 'new'
   get '/profiles/:name', to: 'profiles#show', as: 'profile'
   patch '/profiles/:name', to: 'profiles#update', as: 'profile_update'

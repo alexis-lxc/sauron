@@ -37,4 +37,12 @@ RSpec.describe ProfilesController  do
       :action => 'new'
     )
   end
+
+  it 'routes GET /profiles/:name/edit to profiles#edit' do
+    expect(:get => '/profiles/default/edit').to route_to(
+      :controller => 'profiles',
+      :action => 'edit',
+      :name => 'default'
+    )
+  end
 end
