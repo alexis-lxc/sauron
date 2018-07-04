@@ -13,21 +13,21 @@ http_interactions:
       - application/json
       Content-Type:
       - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
       code: 200
       message: OK
     headers:
-      content-type:
+      Content-Type:
       - application/json
-      etag:
+      Etag:
       - f4543e60f4fca1cd1fb35f79558b15462b30db058a8dc1381066f806949ac023
-      date:
-      - Thu, 28 Jun 2018 13:18:22 GMT
-      content-length:
+      Date:
+      - Wed, 04 Jul 2018 09:16:39 GMT
+      Content-Length:
       - '997'
-      connection:
-      - close
     body:
       encoding: UTF-8
       string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{"config":{"user.network-config":"version:
@@ -43,7 +43,7 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Thu, 28 Jun 2018 13:18:22 GMT
+  recorded_at: Wed, 04 Jul 2018 09:16:39 GMT
 - request:
     method: post
     uri: https://172.16.33.33:8443/1.0/profiles
@@ -52,12 +52,13 @@ http_interactions:
       string: '{"config":{"user.network-config":"---\n:version: 1\n:config:\n- :type:
         physical\n  :name: eth0\n  :subnets:\n  - :type: dhcp\n    :control: auto\n-
         :type: nameserver\n  :address: 172.16.200.200\n","user.user-data":"#cloud-config\n:package_upgrade:
-        true\n:ssh_authorized_keys:\n- \n:runcmd:\n- touch /tmp/nsupdate\n- echo \"server
-        172.16.200.200\" \u003e\u003e /tmp/nsupdate\n- echo \"zone lxd\" \u003e\u003e
-        /tmp/nsupdate\n- echo \"update delete $(hostname).lxd A\" \u003e\u003e /tmp/nsupdate\n-
-        echo \"update add $(hostname).lxd 60 A $(hostname -I | awk ''{print $1}'')\"
-        \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e /tmp/nsupdate\n-
-        nsupdate -v /tmp/nsupdate\n"},"description":"Default LXD profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new","used_by":[]}'
+        true\n:ssh_authorized_keys:\n- abc\n- def\n:runcmd:\n- touch /tmp/nsupdate\n-
+        echo \"server 172.16.200.200\" \u003e\u003e /tmp/nsupdate\n- echo \"zone lxd\"
+        \u003e\u003e /tmp/nsupdate\n- echo \"update delete $(hostname).lxd A\" \u003e\u003e
+        /tmp/nsupdate\n- echo \"update add $(hostname).lxd 60 A $(hostname -I | awk
+        ''{print $1}'')\" \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e
+        /tmp/nsupdate\n- nsupdate -v /tmp/nsupdate\n","limits.cpu":"1","limits.memory":"100MB"},"description":"Default
+        LXD profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new","used_by":[]}'
     headers:
       User-Agent:
       - Hyperkit Ruby Gem 1.2.0
@@ -65,61 +66,28 @@ http_interactions:
       - application/json
       Content-Type:
       - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
       code: 201
       message: Created
     headers:
-      content-type:
+      Content-Type:
       - application/json
-      location:
+      Location:
       - "/1.0/profiles/new"
-      date:
-      - Thu, 28 Jun 2018 13:18:22 GMT
-      content-length:
+      Date:
+      - Wed, 04 Jul 2018 09:16:39 GMT
+      Content-Length:
       - '110'
-      connection:
-      - close
     body:
       encoding: UTF-8
       string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":null}
 
 '
     http_version: 
-  recorded_at: Thu, 28 Jun 2018 13:18:22 GMT
-- request:
-    method: patch
-    uri: https://172.16.33.33:8443/1.0/profiles/new
-    body:
-      encoding: UTF-8
-      string: '{"config":{"limits.cpu":"4","limits.memory":"100MB"}}'
-    headers:
-      User-Agent:
-      - Hyperkit Ruby Gem 1.2.0
-      Accept:
-      - application/json
-      Content-Type:
-      - application/json
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      content-type:
-      - application/json
-      date:
-      - Thu, 28 Jun 2018 13:18:22 GMT
-      content-length:
-      - '108'
-      connection:
-      - close
-    body:
-      encoding: UTF-8
-      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{}}
-
-'
-    http_version: 
-  recorded_at: Thu, 28 Jun 2018 13:18:22 GMT
+  recorded_at: Wed, 04 Jul 2018 09:16:39 GMT
 - request:
     method: get
     uri: https://172.16.33.33:8443/1.0/profiles/new
@@ -133,34 +101,151 @@ http_interactions:
       - application/json
       Content-Type:
       - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
       code: 200
       message: OK
     headers:
-      content-type:
+      Content-Type:
       - application/json
-      etag:
-      - 6255be843fd7a4facb28dfa2cc0683636ff7a4048336d8e476579f8d9ece081b
-      date:
-      - Thu, 28 Jun 2018 13:18:22 GMT
-      content-length:
-      - '1018'
-      connection:
-      - close
+      Etag:
+      - 1e990584df1c5d7b57071a84b174617fd10630f1835a957e2b5580158856c5b3
+      Date:
+      - Wed, 04 Jul 2018 09:16:39 GMT
+      Content-Length:
+      - '1028'
     body:
       encoding: UTF-8
-      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{"config":{"limits.cpu":"4","limits.memory":"100MB","user.network-config":"---\n:version:
+      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{"config":{"limits.cpu":"1","limits.memory":"100MB","user.network-config":"---\n:version:
         1\n:config:\n- :type: physical\n  :name: eth0\n  :subnets:\n  - :type: dhcp\n    :control:
         auto\n- :type: nameserver\n  :address: 172.16.200.200\n","user.user-data":"#cloud-config\n:package_upgrade:
-        true\n:ssh_authorized_keys:\n- \n:runcmd:\n- touch /tmp/nsupdate\n- echo \"server
-        172.16.200.200\" \u003e\u003e /tmp/nsupdate\n- echo \"zone lxd\" \u003e\u003e
-        /tmp/nsupdate\n- echo \"update delete $(hostname).lxd A\" \u003e\u003e /tmp/nsupdate\n-
-        echo \"update add $(hostname).lxd 60 A $(hostname -I | awk ''{print $1}'')\"
-        \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e /tmp/nsupdate\n-
-        nsupdate -v /tmp/nsupdate\n"},"description":"Default LXD profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new","used_by":[]}}
+        true\n:ssh_authorized_keys:\n- abc\n- def\n:runcmd:\n- touch /tmp/nsupdate\n-
+        echo \"server 172.16.200.200\" \u003e\u003e /tmp/nsupdate\n- echo \"zone lxd\"
+        \u003e\u003e /tmp/nsupdate\n- echo \"update delete $(hostname).lxd A\" \u003e\u003e
+        /tmp/nsupdate\n- echo \"update add $(hostname).lxd 60 A $(hostname -I | awk
+        ''{print $1}'')\" \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e
+        /tmp/nsupdate\n- nsupdate -v /tmp/nsupdate\n"},"description":"Default LXD
+        profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new","used_by":[]}}
 
 '
     http_version: 
-  recorded_at: Thu, 28 Jun 2018 13:18:22 GMT
+  recorded_at: Wed, 04 Jul 2018 09:16:39 GMT
+- request:
+    method: patch
+    uri: https://172.16.33.33:8443/1.0/profiles/new
+    body:
+      encoding: UTF-8
+      string: '{"config":{"limits.cpu":"4","limits.memory":"10MB","user.user-data":"---\n:package_upgrade:
+        true\n:ssh_authorized_keys:\n- xyz\n:runcmd:\n- touch /tmp/nsupdate\n- echo
+        \"server 172.16.200.200\" \u003e\u003e /tmp/nsupdate\n- echo \"zone lxd\"
+        \u003e\u003e /tmp/nsupdate\n- echo \"update delete $(hostname).lxd A\" \u003e\u003e
+        /tmp/nsupdate\n- echo \"update add $(hostname).lxd 60 A $(hostname -I | awk
+        ''{print $1}'')\" \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e
+        /tmp/nsupdate\n- nsupdate -v /tmp/nsupdate\n"}}'
+    headers:
+      User-Agent:
+      - Hyperkit Ruby Gem 1.2.0
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 04 Jul 2018 09:16:39 GMT
+      Content-Length:
+      - '108'
+    body:
+      encoding: UTF-8
+      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{}}
+
+'
+    http_version: 
+  recorded_at: Wed, 04 Jul 2018 09:16:39 GMT
+- request:
+    method: get
+    uri: https://172.16.33.33:8443/1.0/profiles/new
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Hyperkit Ruby Gem 1.2.0
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Etag:
+      - 4ead0c34eebc1e87ea2476c91a687466637a0592b38389cb39ba749295b2d4ff
+      Date:
+      - Wed, 04 Jul 2018 09:16:39 GMT
+      Content-Length:
+      - '1010'
+    body:
+      encoding: UTF-8
+      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{"config":{"limits.cpu":"4","limits.memory":"10MB","user.network-config":"---\n:version:
+        1\n:config:\n- :type: physical\n  :name: eth0\n  :subnets:\n  - :type: dhcp\n    :control:
+        auto\n- :type: nameserver\n  :address: 172.16.200.200\n","user.user-data":"---\n:package_upgrade:
+        true\n:ssh_authorized_keys:\n- xyz\n:runcmd:\n- touch /tmp/nsupdate\n- echo
+        \"server 172.16.200.200\" \u003e\u003e /tmp/nsupdate\n- echo \"zone lxd\"
+        \u003e\u003e /tmp/nsupdate\n- echo \"update delete $(hostname).lxd A\" \u003e\u003e
+        /tmp/nsupdate\n- echo \"update add $(hostname).lxd 60 A $(hostname -I | awk
+        ''{print $1}'')\" \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e
+        /tmp/nsupdate\n- nsupdate -v /tmp/nsupdate\n"},"description":"Default LXD
+        profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new","used_by":[]}}
+
+'
+    http_version: 
+  recorded_at: Wed, 04 Jul 2018 09:16:39 GMT
+- request:
+    method: delete
+    uri: https://172.16.33.33:8443/1.0/profiles/new
+    body:
+      encoding: UTF-8
+      string: "{}"
+    headers:
+      User-Agent:
+      - Hyperkit Ruby Gem 1.2.0
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 04 Jul 2018 09:16:39 GMT
+      Content-Length:
+      - '108'
+    body:
+      encoding: UTF-8
+      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{}}
+
+'
+    http_version: 
+  recorded_at: Wed, 04 Jul 2018 09:16:39 GMT
 recorded_with: VCR 4.0.0

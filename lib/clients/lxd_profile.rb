@@ -34,8 +34,12 @@ module LxdProfile
   end
 
   def update(name, attributes)
+    updates = {config: attributes.except(:ssh_authorized_keys)}
+    updates[:config][:"user.user-data"] = {}
     begin
-      client_object.patch_profile(name, attributes)
+      profile = yaml_to_hash(client_object.profile(name))
+      updates[:config][:"user.user-data"] = profile[:config][:"user.user-data"].merge({ssh_authorized_keys: attributes[:ssh_authorized_keys]}).to_yaml
+      client_object.patch_profile(name, updates)
     rescue Hyperkit::Error => error
       return {success: 'false', error: error.as_json}
     end
