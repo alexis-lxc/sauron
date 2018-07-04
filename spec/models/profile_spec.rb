@@ -80,7 +80,7 @@ RSpec.describe Profile do
       end
     end
 
-    context 'failure/not-found' do
+    context 'failure/not-found', :vcr do
       it 'should return object with errors' do
         profile = Profile.new(name: 'new-profile').get
         expect(profile.errors.full_messages.join(',')).to eq('Response GET https://172.16.33.33:8443/1.0/profiles/new-profile: 404 - Error: not found')
