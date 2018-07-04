@@ -18,6 +18,7 @@
         <td><%= profile %></td>
         <td>
         <%= link_to t('.show'), profile_path(:name => profile), :class => 'btn btn-primary btn-sm' %>
+        <%= link_to t('.edit'), profile_edit_path(:name => profile), :class => 'btn btn-primary btn-sm' %>
         </td>
       </tr>
     <% end %>

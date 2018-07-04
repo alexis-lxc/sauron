@@ -1,7 +1,6 @@
 class ProfilesController < ApplicationController
   def create
-    profile = Profile.new(name: params[:name], ssh_authorized_keys: params[:ssh_authorized_keys],
-                          cpu_limit: params[:cpu_limit], memory_limit: params[:memory_limit])
+    profile = Profile.new(profile_params)
     unless profile.valid?
       render json: {success: false, errors: profile.errors.full_messages.join(',')}, status: :bad_request
       return
@@ -26,4 +25,13 @@ class ProfilesController < ApplicationController
     @profile = Profile.new
   end
 
+  def edit
+    @profile = Profile.new(name: params[:name]).get
+  end
+
+  private
+
+  def profile_params
+    params.require(:profile).permit(:name, :memory_limit, :cpu_limit, :ssh_authorized_keys)
+  end
 end

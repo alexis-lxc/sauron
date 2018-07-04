@@ -18,8 +18,11 @@
   <dd><%= @profile.memory_limit %></dd>
   <dt><strong><%= model_class.human_attribute_name(:ssh_authorized_keys) %>:</strong></dt>
   <% if @profile.ssh_authorized_keys.present? %>
-    <% @profile.ssh_authorized_keys.each do |key| %>
+    <% @profile.ssh_authorized_keys.split(',').each do |key| %>
       <dd><%= key %></dd>
     <% end %>
   <% end %>
+  <td>
+    <%= link_to t('.edit'), profile_edit_path(:name => @profile.name), :class => 'btn btn-primary btn-sm' %>
+  </td>
 </dl>
