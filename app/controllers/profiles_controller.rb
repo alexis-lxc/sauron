@@ -26,7 +26,13 @@ class ProfilesController < ApplicationController
   end
 
   def edit
-    @profile = Profile.new(name: params[:name]).get
+    @profile = Profile.new(name: params[:name])
+    unless @profile.get.errors.blank?
+      flash[:message] = "Edit failed #{@profile.errors.full_messages.join(',')}"
+      render action: :index
+      return
+    end
+    render action: :edit
   end
 
   def update

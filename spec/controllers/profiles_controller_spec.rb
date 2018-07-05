@@ -79,6 +79,41 @@ RSpec.describe ProfilesController, type: :controller do
     end
   end
 
+  describe 'GET#new' do
+    context 'success' do
+      it 'should assign new profile object and render new template' do
+        get :new
+        expect(assigns(:profile)).to be_an_instance_of(Profile)
+        expect(response).to render_template(:new)
+      end
+    end
+  end
+
+  describe 'GET#edit', :vcr do
+    context 'success' do
+      it 'should assign the profile', :delete_profile_after, profile_name: 'new-profile' do
+        LxdProfile.create_from(from: 'default', to: 'new-profile',
+                               overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB",
+                                           :"ssh_authorized_keys" => ['abc', 'def']})
+        get :edit, params: {name: 'new-profile'}
+        expect(response).to render_template(:edit)
+        expect(assigns(:profile).name).to eq('new-profile')
+        expect(assigns(:profile).cpu_limit).to eq('1')
+        expect(assigns(:profile).memory_limit).to eq('100MB')
+        expect(assigns(:profile).ssh_authorized_keys).to eq(['abc', 'def'])
+      end
+    end
+
+    context 'failure' do
+      it 'should redirect to profiles page and flash the error message' do
+        get :edit, params: {name: 'new-profile'}
+
+        expect(response).to render_template(:index)
+        expect(response.request.flash[:message]).to eq('Edit failed Response GET https://172.16.33.33:8443/1.0/profiles/new-profile: 404 - Error: not found')
+      end
+    end
+  end
+
   describe 'GET#show' do
     context 'success', :vcr do
       it 'should return details of a profile', :delete_profile_after, profile_name: 'new-profile' do
