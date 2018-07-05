@@ -46,7 +46,7 @@ RSpec.describe Lxd do
       end
       context 'start_container returns success true' do
         it 'should return success true' do
-          expect(StartContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname).once
+          expect(StartContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname).once
           allow(Lxd).to receive(:start_container).with(container_hostname).and_return({success: 'true'})
           response = Lxd.launch_container(image, container_hostname)
           expect(response[:success]).to eq('true')
@@ -262,7 +262,7 @@ RSpec.describe Lxd do
         it 'should return success true' do
           allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'true'})
 
-          expect(DeleteContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname).once
+          expect(DeleteContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname).once
           response = Lxd.destroy_container(container_hostname)
           expect(response[:success]).to eq('true')
         end

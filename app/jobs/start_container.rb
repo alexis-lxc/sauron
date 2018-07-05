@@ -9,7 +9,7 @@ class StartContainer
   def perform(container_name)
     container = client.container(container_name)
     start_interval = Time.now - container[:created_at]
-    if start_interval > Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER.to_i
+    if start_interval > Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS.to_i
       if container[:status] != "Running"
         client.start_container(container_name)
       end

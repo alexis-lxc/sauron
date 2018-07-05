@@ -37,7 +37,7 @@ module Lxd
   def launch_container(image, container_hostname)
     create_container_response = create_container(container_hostname)
     if create_container_response[:success] == 'true'
-      StartContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname)
+      StartContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname)
     end
     create_container_response
   end
@@ -65,7 +65,7 @@ module Lxd
   def destroy_container(container_hostname)
     stop_container_response = stop_container(container_hostname)
     if stop_container_response[:success] == 'true'
-      DeleteContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_STARTING_CONTAINER, container_hostname)
+      DeleteContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname)
     end
     stop_container_response
   end
