@@ -3,6 +3,6 @@
   <h1><%=t '.title', :default => "Edit #{model_class.model_name.human.titleize}" %></h1>
 </div>
 
-<%= render 'form', profile: @profile, submit_tag_name: 'Update' %>
+<%= render 'form', profile: @profile, submit_tag_name: 'Update', method: 'patch', url: profile_update_path %>
 
 <%= link_to 'Back', profiles_path %>

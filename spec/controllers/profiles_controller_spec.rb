@@ -46,6 +46,39 @@ RSpec.describe ProfilesController, type: :controller do
     end
   end
 
+  describe 'PATCH#update', :vcr do
+    context 'success' do
+      before(:each) do
+        LxdProfile.create_from(from: 'default', to: 'new-profile',
+                               overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB",
+                                           :"ssh_authorized_keys" => ['abc', 'def']})
+      end
+      subject {patch :update, params: {profile: {name: 'new-profile', 'cpu_limit': '4', 'memory_limit': '10MB', 'ssh_authorized_keys': ['xyz']}, name: 'new'}}
+      it 'should render show', :delete_profile_after, profile_name: 'new-profile' do
+        expect(subject.request.flash[:message]).to eq('Edit Done')
+        expect(subject).to render_template(:show)
+      end
+    end
+
+    context 'failure' do
+      context 'profile not found' do
+        subject {patch :update, params: {profile: {name: 'new-profile', 'cpu_limit': '4', 'memory_limit': '10MB', 'ssh_authorized_keys': ['xyz']}, name: 'new'}}
+        it 'should redirect to edit page' do
+          expect(subject).to render_template(:edit)
+          expect(subject.request.flash[:message]).to eq('Edit failed Response GET https://172.16.33.33:8443/1.0/profiles/new-profile: 404 - Error: not found')
+        end
+      end
+
+      context 'bad params' do
+        subject {patch :update, params: {profile: {name: 'new-profile', 'cpu_limit': '-4', 'memory_limit': '10MB', 'ssh_authorized_keys': ['xyz']}, name: 'new'}}
+        it 'should redirect to edit page' do
+          expect(subject).to render_template(:edit)
+          expect(subject.request.flash[:message]).to eq('Edit failed Cpu limit must be greater than 0')
+        end
+      end
+    end
+  end
+
   describe 'GET#show' do
     context 'success', :vcr do
       it 'should return details of a profile', :delete_profile_after, profile_name: 'new-profile' do

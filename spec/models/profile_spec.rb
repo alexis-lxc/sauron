@@ -67,6 +67,29 @@ RSpec.describe Profile do
     end
   end
 
+  describe 'update', :vcr do
+    context 'success' do
+      it 'should update the profile', :delete_profile_after, profile_name: 'new' do
+        LxdProfile.create_from(from: 'default', to: 'new',
+                               overrides: {:"limits.cpu"=>"1", :"limits.memory"=>"100MB",
+                                           :"ssh_authorized_keys" => ['abc', 'def']})
+        profile = Profile.new(name: 'new', cpu_limit: '2', memory_limit: '10GB', ssh_authorized_keys: ['xtc']).update
+        expect(profile.errors.full_messages.join(',')).to eq('')
+        expect(profile.name).to eq('new')
+        expect(profile.ssh_authorized_keys).to eq(['xtc'])
+        expect(profile.cpu_limit).to eq('2')
+        expect(profile.memory_limit).to eq('10GB')
+      end
+    end
+
+    context 'failure' do
+      it 'should update errors in the profile object' do
+        profile = Profile.new(name: 'new', cpu_limit: '2', memory_limit: '10GB', ssh_authorized_keys: ['xtc']).update
+        expect(profile.errors.full_messages.join(',')).to eq('Response GET https://172.16.33.33:8443/1.0/profiles/new: 404 - Error: not found')
+      end
+    end
+  end
+
   describe 'get' do
     context 'success', :vcr do
       it 'should get the lxd profile and return Profile object', :delete_profile_after, profile_name: 'new-profile' do
