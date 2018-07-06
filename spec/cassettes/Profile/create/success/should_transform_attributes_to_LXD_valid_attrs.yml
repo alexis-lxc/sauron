@@ -25,7 +25,7 @@ http_interactions:
       Etag:
       - f4543e60f4fca1cd1fb35f79558b15462b30db058a8dc1381066f806949ac023
       Date:
-      - Mon, 02 Jul 2018 10:03:39 GMT
+      - Fri, 06 Jul 2018 04:02:00 GMT
       Content-Length:
       - '997'
     body:
@@ -43,7 +43,7 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Mon, 02 Jul 2018 10:03:39 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 - request:
     method: post
     uri: https://172.16.33.33:8443/1.0/profiles
@@ -78,7 +78,7 @@ http_interactions:
       Location:
       - "/1.0/profiles/new-profile"
       Date:
-      - Mon, 02 Jul 2018 10:03:39 GMT
+      - Fri, 06 Jul 2018 04:02:00 GMT
       Content-Length:
       - '110'
     body:
@@ -87,7 +87,7 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Mon, 02 Jul 2018 10:03:39 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 - request:
     method: get
     uri: https://172.16.33.33:8443/1.0/profiles/new-profile
@@ -113,7 +113,7 @@ http_interactions:
       Etag:
       - 1e990584df1c5d7b57071a84b174617fd10630f1835a957e2b5580158856c5b3
       Date:
-      - Mon, 02 Jul 2018 10:03:39 GMT
+      - Fri, 06 Jul 2018 04:02:00 GMT
       Content-Length:
       - '1036'
     body:
@@ -131,7 +131,7 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Mon, 02 Jul 2018 10:03:39 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 - request:
     method: delete
     uri: https://172.16.33.33:8443/1.0/profiles/new-profile
@@ -155,7 +155,7 @@ http_interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 02 Jul 2018 10:03:39 GMT
+      - Fri, 06 Jul 2018 04:02:00 GMT
       Content-Length:
       - '108'
     body:
@@ -164,5 +164,5 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Mon, 02 Jul 2018 10:03:40 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 recorded_with: VCR 4.0.0

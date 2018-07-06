@@ -25,7 +25,7 @@ http_interactions:
       Etag:
       - f4543e60f4fca1cd1fb35f79558b15462b30db058a8dc1381066f806949ac023
       Date:
-      - Fri, 06 Jul 2018 03:40:54 GMT
+      - Fri, 06 Jul 2018 04:02:00 GMT
       Content-Length:
       - '997'
     body:
@@ -43,7 +43,7 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Fri, 06 Jul 2018 03:40:55 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 - request:
     method: post
     uri: https://172.16.33.33:8443/1.0/profiles
@@ -58,7 +58,7 @@ http_interactions:
         /tmp/nsupdate\n- echo \"update add $(hostname).lxd 60 A $(hostname -I | awk
         ''{print $1}'')\" \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e
         /tmp/nsupdate\n- nsupdate -v /tmp/nsupdate\n","limits.cpu":"1","limits.memory":"100MB"},"description":"Default
-        LXD profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"medium","used_by":[]}'
+        LXD profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new-profile","used_by":[]}'
     headers:
       User-Agent:
       - Hyperkit Ruby Gem 1.2.0
@@ -76,9 +76,9 @@ http_interactions:
       Content-Type:
       - application/json
       Location:
-      - "/1.0/profiles/medium"
+      - "/1.0/profiles/new-profile"
       Date:
-      - Fri, 06 Jul 2018 03:40:54 GMT
+      - Fri, 06 Jul 2018 04:02:00 GMT
       Content-Length:
       - '110'
     body:
@@ -87,10 +87,10 @@ http_interactions:
 
 '
     http_version: 
-  recorded_at: Fri, 06 Jul 2018 03:40:55 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 - request:
     method: get
-    uri: https://172.16.33.33:8443/1.0/profiles/medium
+    uri: https://172.16.33.33:8443/1.0/profiles/new-profile
     body:
       encoding: US-ASCII
       string: ''
@@ -113,9 +113,9 @@ http_interactions:
       Etag:
       - 1e990584df1c5d7b57071a84b174617fd10630f1835a957e2b5580158856c5b3
       Date:
-      - Fri, 06 Jul 2018 03:40:54 GMT
+      - Fri, 06 Jul 2018 04:02:01 GMT
       Content-Length:
-      - '1031'
+      - '1036'
     body:
       encoding: UTF-8
       string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{"config":{"limits.cpu":"1","limits.memory":"100MB","user.network-config":"---\n:version:
@@ -127,42 +127,9 @@ http_interactions:
         /tmp/nsupdate\n- echo \"update add $(hostname).lxd 60 A $(hostname -I | awk
         ''{print $1}'')\" \u003e\u003e /tmp/nsupdate\n- echo \"send\" \u003e\u003e
         /tmp/nsupdate\n- nsupdate -v /tmp/nsupdate\n"},"description":"Default LXD
-        profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"medium","used_by":[]}}
+        profile","devices":{"eth0":{"name":"eth0","nictype":"bridged","parent":"fan10","type":"nic"},"root":{"path":"/","pool":"local","type":"disk"}},"name":"new-profile","used_by":[]}}
 
 '
     http_version: 
-  recorded_at: Fri, 06 Jul 2018 03:40:55 GMT
-- request:
-    method: delete
-    uri: https://172.16.33.33:8443/1.0/profiles/medium
-    body:
-      encoding: UTF-8
-      string: "{}"
-    headers:
-      User-Agent:
-      - Hyperkit Ruby Gem 1.2.0
-      Accept:
-      - application/json
-      Content-Type:
-      - application/json
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - application/json
-      Date:
-      - Fri, 06 Jul 2018 03:40:58 GMT
-      Content-Length:
-      - '108'
-    body:
-      encoding: UTF-8
-      string: '{"type":"sync","status":"Success","status_code":200,"operation":"","error_code":0,"error":"","metadata":{}}
-
-'
-    http_version: 
-  recorded_at: Fri, 06 Jul 2018 03:40:59 GMT
+  recorded_at: Fri, 06 Jul 2018 04:02:01 GMT
 recorded_with: VCR 4.0.0

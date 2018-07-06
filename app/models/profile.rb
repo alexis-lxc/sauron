@@ -6,10 +6,11 @@ class Profile
   validates_numericality_of :cpu_limit, allow_nil: true, greater_than: 0
 
   def create
+    ssh_authorized_keys = (self.ssh_authorized_keys.is_a? String) ? self.ssh_authorized_keys.split(',') : self.ssh_authorized_keys
     response = LxdProfile.create_from(from: 'default', to: self.name,
                                       overrides: {:"limits.cpu" => self.cpu_limit,
                                                   :"limits.memory" => self.memory_limit,
-                                                  :"ssh_authorized_keys" => self.ssh_authorized_keys})
+                                                  :"ssh_authorized_keys" => ssh_authorized_keys})
     if response[:success] == 'false'
       self.errors.add(:response, response[:error])
       return false

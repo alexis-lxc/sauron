@@ -10,11 +10,14 @@ RSpec.describe ProfilesController, type: :controller do
   describe 'POST#create' do
     context 'success', :vcr do
       it 'creates a new profile', :delete_profile_after, profile_name: 'medium' do
-        post :create, params: {profile: {name: 'medium', cpu_limit: '1', memory_limit: '100MB', ssh_authorized_keys: ['abc','def']}}
+        post :create, params: {profile: {name: 'medium', cpu_limit: '1', memory_limit: '100MB', ssh_authorized_keys: 'abc,def'}}
 
         expect(JSON.parse(response.body)['success']).to eq(true)
         expect(JSON.parse(response.body)['errors']).to eq('')
         expect(response.code).to eq('201')
+
+        profile = Profile.new(name: 'medium').get
+        expect(profile.ssh_authorized_keys).to eq(['abc','def'])
       end
     end
 

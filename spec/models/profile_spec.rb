@@ -14,10 +14,22 @@ RSpec.describe Profile do
         profile = Profile.new(name: 'new-profile', cpu_limit: '1', memory_limit: '100MB', ssh_authorized_keys: ['abc','def'])
         response = profile.create
         expect(response).to eq(true)
-        profile_get = LxdProfile.get('new-profile')
-        expect(profile.errors.full_messages.join(',')).to  eq('')
-        expect(profile_get[:data][:profile][:config][:"limits.cpu"]).to eq('1')
-        expect(profile_get[:data][:profile][:config][:"limits.memory"]).to eq('100MB')
+        profile_get = Profile.new(name: 'new-profile').get
+        expect(profile_get.errors.full_messages.join(',')).to  eq('')
+        expect(profile_get.cpu_limit).to eq('1')
+        expect(profile_get.memory_limit).to eq('100MB')
+        expect(profile_get.ssh_authorized_keys).to eq(['abc','def'])
+      end
+
+      it 'should split the ssh_authorized_keys on , if string is passed' do
+        profile = Profile.new(name: 'new-profile', cpu_limit: '1', memory_limit: '100MB', ssh_authorized_keys: 'abc,def')
+        response = profile.create
+        expect(response).to eq(true)
+        profile_get = Profile.new(name: 'new-profile').get
+        expect(profile_get.errors.full_messages.join(',')).to  eq('')
+        expect(profile_get.cpu_limit).to eq('1')
+        expect(profile_get.memory_limit).to eq('100MB')
+        expect(profile_get.ssh_authorized_keys).to eq(['abc','def'])
       end
     end
 
