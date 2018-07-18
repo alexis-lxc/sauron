@@ -9,6 +9,7 @@ test:
   SIDEKIQ_POLL_INTERVAL: 5
   SIDEKIQ_REDIS_URL: redis://localhost:6379
   WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS: 15
+  MAX_RETRY: 10
 
 development:
   RAILS_ENV: development
