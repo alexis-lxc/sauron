@@ -20,9 +20,10 @@ module Lxd
   def show_container(container_name)
     container_details = client.container(container_name)
     container_state = client.container_state(container_name)
-    ipaddress = container_state[:network][:eth0][:addresses].
-        select {|x| x[:family] == 'inet'}.
-        first[:address]
+    ipaddress = container_state&.network&.eth0&.addresses || []
+    ipaddress = ipaddress.
+      select {|x| x[:family] == 'inet'}.
+      first&.address
     Container.new(
         container_hostname: container_name,
         status: container_state[:status],
