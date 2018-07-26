@@ -18,20 +18,25 @@ module Lxd
   end
 
   def show_container(container_name)
-    container_details = client.container(container_name)
+    begin
+      container_details = client.container(container_name)
+    rescue Hyperkit::NotFound => error
+      return {success: false, error: error.as_json}
+    end
     container_state = client.container_state(container_name)
     ipaddress = container_state&.network&.eth0&.addresses || []
     ipaddress = ipaddress.
       select {|x| x[:family] == 'inet'}.
       first&.address
-    Container.new(
-        container_hostname: container_name,
-        status: container_state[:status],
-        ipaddress: ipaddress,
-        image: container_details[:config][:"image.description"],
-        lxc_profiles: container_details[:profiles],
-        created_at: container_details[:created_at]
+    container = Container.new(
+      container_hostname: container_name,
+      status: container_state[:status],
+      ipaddress: ipaddress,
+      image: container_details[:config][:"image.description"],
+      lxc_profiles: container_details[:profiles],
+      created_at: container_details[:created_at]
     )
+    {success: true, data: container}
   end
 
   #does not honour image param, will launch 16.04 by default for now.

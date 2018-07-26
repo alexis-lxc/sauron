@@ -48,15 +48,16 @@ RSpec.describe ContainersController do
   describe 'GET#show' do
     context 'show container details' do
       let(:container) { Container.new(container_hostname: 'p-user-01',status: 'Running',ipaddress: '240.1.2.1',image: 'ubuntu',lxc_profiles: ['default'],created_at: '2018-03-26 17:48:26 +0530') }
+      let(:container_res) { { success: true, data: container}}
       before do
-        allow(Lxd).to receive(:show_container).with('p-user-service-01').and_return(container)
+        allow(Lxd).to receive(:show_container).with('p-user-service-01').and_return(container_res)
       end
       it 'should return all details of a container' do
         get :show, params: { container_hostname: 'p-user-service-01' }
-        expect(assigns(:container)).to eq(container)
+        expect(assigns(:container)).to eq(container_res)
       end
 
-      it 'should render json resposne' do
+      it 'should render json response' do
         get :show, params: { container_hostname: 'p-user-service-01', format: 'json' }
         expect(response).to be_success
       end
