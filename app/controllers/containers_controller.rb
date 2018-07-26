@@ -35,7 +35,7 @@ class ContainersController < ApplicationController
         format.html
         format.json
       else
-        format.json{ render :json => @container, :status => 404 }
+        format.json{ render :json => @container, :status => 500 }
       end
     end
   end
