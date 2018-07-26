@@ -20,7 +20,7 @@ module Lxd
   def show_container(container_name)
     begin
       container_details = client.container(container_name)
-    rescue Hyperkit::NotFound => error
+    rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
     container_state = client.container_state(container_name)
