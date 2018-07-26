@@ -31,8 +31,12 @@ class ContainersController < ApplicationController
   def show
     @container = Lxd.show_container(params[:container_hostname])
     respond_to do |format|
-      format.html
-      format.json
+      if @container[:success]
+        format.html
+        format.json
+      else
+        format.json{ render :json => @container, :status => 404 }
+      end
     end
   end
 
