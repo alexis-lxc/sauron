@@ -46,8 +46,8 @@ RSpec.describe Lxd do
       end
       context 'start_container returns success true' do
         it 'should return success true' do
-          expect(StartContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname).once
-          allow(Lxd).to receive(:start_container).with(container_hostname).and_return({success: 'true'})
+          expect(StartContainer).to receive(:perform_async).with(container_hostname).once
+          allow(Lxd).to receive(:create_container).with(container_hostname).and_return({success: 'true'})
           response = Lxd.launch_container(image, container_hostname)
           expect(response[:success]).to eq('true')
         end
@@ -74,7 +74,7 @@ RSpec.describe Lxd do
 
     context 'success' do
       it 'should create a new container based on the attributes passed' do
-        expected_response = {:id => "2dbf5369-f3c8-4f16-b28f-8cfab8e45a7e",
+        create_response = {:id => "2dbf5369-f3c8-4f16-b28f-8cfab8e45a7e",
                              :class => "task",
                              :created_at => '2018-03-27 13:52:59 +0700',
                              :updated_at => '2018-03-27 13:52:59 +0700',
@@ -84,7 +84,18 @@ RSpec.describe Lxd do
                              :metadata => nil,
                              :may_cancel => false,
                              :err => ""}
-        allow_any_instance_of(Hyperkit::Client).to receive(:create_container).with(container_name, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04").and_return(expected_response)
+        expected_response = {:id => "2dbf5369-f3c8-4f16-b28f-8cfab8e45a7e",
+                             :class => "task",
+                             :created_at => '2018-03-27 13:52:59 +0700',
+                             :updated_at => '2018-03-27 13:52:59 +0700',
+                             :status => 'Success',
+                             :status_code => 200,
+                             :resources => {:containers => ["/1.0/containers/p-wallet-service-01"]},
+                             :metadata => nil,
+                             :may_cancel => false,
+                             :err => ""}
+        allow_any_instance_of(Hyperkit::Client).to receive(:create_container).with(container_name, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04").and_return(create_response)
+        allow_any_instance_of(Hyperkit::Client).to receive(:wait_for_operation).with(create_response[:id]).and_return(expected_response)
         response = Lxd.create_container(container_name)
         expect(response[:success]).to eq('true')
         expect(response[:error]).to eq('')
@@ -203,15 +214,17 @@ RSpec.describe Lxd do
                            :status_code => 103,
                            :last_used_at => '2018-03-26 09:35:42 UTC'}
 
+      container_state_json = container_state.to_json
+      container_state_obj = JSON.parse(container_state_json, object_class: OpenStruct)
       allow_any_instance_of(Hyperkit::Client).to receive(:container).with(container_name).and_return(container_details)
-      allow_any_instance_of(Hyperkit::Client).to receive(:container_state).with(container_name).and_return(container_state)
+      allow_any_instance_of(Hyperkit::Client).to receive(:container_state).with(container_name).and_return(container_state_obj)
 
       container = Lxd.show_container('p-user-service-lxc-05')
-      expect(container.ipaddress).to eq('240.7.1.113')
-      expect(container.status).to eq('Running')
-      expect(container.container_hostname).to eq('p-user-service-lxc-05')
-      expect(container.image).to eq('ubuntu 16.04 LTS amd64 (release) (20180306)')
-      expect(container.lxc_profiles).to eq(["default"])
+      expect(container[:data].ipaddress).to eq('240.7.1.113')
+      expect(container[:data].status).to eq('Running')
+      expect(container[:data].container_hostname).to eq('p-user-service-lxc-05')
+      expect(container[:data].image).to eq('ubuntu 16.04 LTS amd64 (release) (20180306)')
+      expect(container[:data].lxc_profiles).to eq(["default"])
     end
   end
 
