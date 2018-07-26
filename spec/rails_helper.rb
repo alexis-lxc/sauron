@@ -8,6 +8,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 require 'vcr'
 require 'hyperkit'
+require 'json'
+require 'ostruct'
 
 RSpec.configure do |config|
    config.use_transactional_fixtures = false

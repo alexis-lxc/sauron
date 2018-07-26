@@ -41,9 +41,9 @@ module Lxd
 
   #does not honour image param, will launch 16.04 by default for now.
   def launch_container(image, container_hostname)
-    create_container_response = create_container(container_hostname)
+    create_container_response = Lxd.create_container(container_hostname)
     if create_container_response[:success] == 'true'
-      StartContainer.perform_in(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname)
+      StartContainer.perform_async(container_hostname)
     end
     create_container_response
   end
@@ -51,11 +51,12 @@ module Lxd
   def create_container(container_hostname)
     begin
       response = client.create_container(container_hostname, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04")
+      op_response = client.wait_for_operation(response[:id])
     rescue Hyperkit::Error => error
       return {success: false, error: error.as_json}
     end
-    success = response[:status] == 'Running' ? 'true' : false
-    {success: success, error: response[:err]}
+    success = op_response[:status] == 'Success' ? 'true' : false
+    {success: success, error: op_response[:err]}
   end
 
   def start_container(container_hostname)
