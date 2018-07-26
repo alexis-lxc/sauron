@@ -1,10 +1,10 @@
-json.success true
+json.success @container[:success]
 json.data do
-  json.hostname @container.container_hostname
-  json.ipaddress @container.ipaddress
-  json.image @container.image
-  json.status @container.status
-  json.created_at @container.created_at
-  json.lxc_profiles @container.lxc_profiles
+  json.hostname @container[:data].container_hostname
+  json.status @container[:data].status
+  json.ipaddress @container[:data].ipaddress
+  json.image @container[:data].image
+  json.lxc_profiles @container[:data].lxc_profiles
+  json.created_at @container[:data].created_at
 end
 
