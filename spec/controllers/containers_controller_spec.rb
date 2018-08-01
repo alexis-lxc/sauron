@@ -30,6 +30,36 @@ RSpec.describe ContainersController do
     end
   end
 
+  describe 'POST#recreate' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+    end
+
+    context 'success' do
+      it 'should return successfull response if recreate_container success' do
+        allow(Lxd).to receive(:recreate_container).and_return({success: 'true'})
+        post :recreate , :params => {:container => {:container_hostname => 'p-user-service-01', image: 'ubuntu:16.04'}}
+        expect(response.code).to eq '201'
+      end
+    end
+
+    context 'failure' do
+      it 'should return 400 if supplied container is invalid' do
+        container = Container.new
+        allow(container).to receive(:valid?).and_return false
+        allow(Container).to receive(:new).and_return(container)
+        post :recreate , :params => {:container => {:container_hostname => 'p-user-service-01', image: 'ubuntu:16.04'}}
+        expect(response.code).to eq '400'
+      end
+
+      it 'should return successfull response if recreate_container success' do
+        allow(Lxd).to receive(:recreate_container).and_return({})
+        post :recreate , :params => {:container => {:container_hostname => 'p-user-service-01', image: 'ubuntu:16.04'}}
+        expect(response.code).to eq '500'
+      end
+    end
+  end
+
   describe 'GET#index' do
     context 'list all the containers of a host' do
       it 'should return all the hosts' do

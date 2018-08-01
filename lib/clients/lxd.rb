@@ -92,6 +92,26 @@ module Lxd
     {success: success, error: op_response[:err]}
   end
 
+  def recreate_container(container_hostname)
+    begin
+      show_res = show_container(container_hostname)
+      if show_res[:success]
+        unless show_res[:data].status == "Stopped"
+          stop_res = client.stop_container(container_hostname)
+          client.wait_for_operation(stop_res[:id])
+        end
+        delete_res = client.delete_container(container_hostname)
+        client.wait_for_operation(delete_res[:id])
+      end
+
+      create_res = client.create_container(container_hostname, server: "https://cloud-images.ubuntu.com/releases", protocol: "simplestreams", alias: "16.04")
+      create_op_res = client.wait_for_operation(create_res[:id])
+      StartContainer.perform_async(container_hostname) if create_op_res[:status] == 'Success'
+    rescue Hyperkit::Error => error
+      return {success: false, error: error.as_json}
+    end
+    success = create_op_res[:status] == 'Success' ? 'true' : false
+    {success: success, error: create_op_res[:err]}
   end
 
   def attach_public_key(container_hostname, public_key, opts = {})

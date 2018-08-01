@@ -294,13 +294,38 @@ RSpec.describe Lxd do
     end
   end
 
+  describe 'recreate_container' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+      allow(ContainerHost).to receive(:reachable_node).and_return(ContainerHost.first.ipaddress)
+      container = Container.new(status: 'Running')
+      allow(Lxd).to receive(:show_container).with(container_hostname).and_return({data: container})
+    end
 
-          expect(DeleteContainer).not_to receive(:perform_in)
-          response = Lxd.destroy_container(container_hostname)
+    let(:container_hostname) {'p-wallet-service-01'}
 
-          expect(response[:success]).to eq('false')
-          expect(response[:error]).to eq('bad request')
-        end
+    context 'recreate process success' do
+      it 'should return success true' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:stop_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:delete_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:create_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:wait_for_operation).and_return(status: 'Success', err: '')
+        allow(StartContainer).to receive(:perform_async).and_return(true)
+        expect(StartContainer).to receive(:perform_async).with(container_hostname).once
+        response = Lxd.recreate_container(container_hostname)
+        expect(response[:success]).to eq('true')
+      end
+    end
+
+    context 'recreate process fail when creating the container' do
+      it 'should return success false' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:stop_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:delete_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:create_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:wait_for_operation).and_return(status: 'False', err: '')
+        expect(StartContainer).not_to receive(:perform_async)
+        response = Lxd.recreate_container(container_hostname)
+        expect(response[:success]).to eq(false)
       end
     end
   end

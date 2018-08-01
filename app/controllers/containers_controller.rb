@@ -1,5 +1,5 @@
 class ContainersController < ApplicationController
-  before_action :assign_attributes, only: [:create]
+  before_action :assign_attributes, only: [:create, :recreate]
 
   def create
     container = Container.new(image: @image, container_hostname: @container_hostname)
@@ -8,6 +8,18 @@ class ContainersController < ApplicationController
       return
     end
     response = container.launch
+
+    return render json: response, status: :created if response[:success] == 'true'
+    render json: response, status: :internal_server_error
+  end
+
+  def recreate
+    container = Container.new(image: @image, container_hostname: @container_hostname)
+    unless container.valid?
+      render json: {success: false, errors: container.errors.full_messages.join(',')}, status: :bad_request
+      return
+    end
+    response = Lxd.recreate_container(@container_hostname)
 
     return render json: response, status: :created if response[:success] == 'true'
     render json: response, status: :internal_server_error
