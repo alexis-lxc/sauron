@@ -5,17 +5,17 @@
 
 <dl class="dl-horizontal">
   <dt><strong><%= model_class.human_attribute_name(:hostname) %>:</strong></dt>
-  <dd><%= @container.container_hostname %></dd>
+  <dd><%= @container[:data]&.container_hostname %></dd>
   <dt><strong><%= model_class.human_attribute_name(:ipaddress) %>:</strong></dt>
-  <dd><%= @container.ipaddress %></dd>
+  <dd><%= @container[:data]&.ipaddress %></dd>
   <dt><strong><%= model_class.human_attribute_name(:image) %>:</strong></dt>
-  <dd><%= @container.image %></dd>
+  <dd><%= @container[:data]&.image %></dd>
   <dt><strong><%= model_class.human_attribute_name(:status) %>:</strong></dt>
-  <dd><%= @container.status %></dd>
+  <dd><%= @container[:data]&.status %></dd>
   <dt><strong><%= model_class.human_attribute_name(:created_at) %>:</strong></dt>
-  <dd><%= @container.created_at %></dd>
+  <dd><%= @container[:data]&.created_at %></dd>
   <dt><strong><%= model_class.human_attribute_name(:lxc_profiles) %>:</strong></dt>
-  <dd><%= @container.lxc_profiles %></dd>
+  <dd><%= @container[:data]&.lxc_profiles %></dd>
   <%= link_to t('.back', :default => t("helpers.links.back")),
     container_hosts_path(), :class => 'btn btn-primary btn-sm' %>
 </dl>

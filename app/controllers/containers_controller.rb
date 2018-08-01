@@ -20,8 +20,18 @@ class ContainersController < ApplicationController
       return
     end
     response = Lxd.destroy_container(params[:container_hostname])
-    return redirect_to containers_path(lxd_host_ipaddress: params[:lxd_host_ipaddress]) if response[:success] == 'true'
-    render json: response, status: :internal_server_error
+    respond_to do |format|
+      if response[:success] == 'true'
+        format.html { redirect_to containers_path(lxd_host_ipaddress: params[:lxd_host_ipaddress]) }
+        format.json { render json: response }
+      else
+        format.html {
+          redirect_to containers_path(lxd_host_ipaddress: params[:lxd_host_ipaddress]),
+          :notice => response[:error]
+        }
+        format.json { render json: response, status: :internal_server_error }
+      end
+    end
   end
 
   def index

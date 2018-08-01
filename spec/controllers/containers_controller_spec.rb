@@ -70,18 +70,28 @@ RSpec.describe ContainersController do
 
       it "should destroy a container based on hostname and host's ipaddress" do
         allow(Lxd).to receive(:destroy_container).with(container_hostname).and_return({success: 'true', error: ''})
-
         delete :destroy, params: {container_hostname: container_hostname}
         expect(response.code).to eq('302')
       end
 
-      it 'return errors if LXD moduld fails' do
+      it "should redirect if LXD module fails" do
         allow(Lxd).to receive(:destroy_container).with(container_hostname).and_return({success: 'false', error: 'bad request'})
-
         delete :destroy, params: {container_hostname: container_hostname}
-        expect(response.code).to eq('500')
-        expect(JSON.parse(response.body)['error']).to eq('bad request')
-        expect(JSON.parse(response.body)['success']).to eq('false')
+        expect(response.code).to eq('302')
+      end
+
+      context 'JSON request' do
+        before(:each) do
+          request.env["HTTP_ACCEPT"] = 'application/json'
+        end
+
+        it 'return errors if LXD module fails' do
+          allow(Lxd).to receive(:destroy_container).with(container_hostname).and_return({success: 'false', error: 'bad request'})
+          delete :destroy, params: {container_hostname: container_hostname}
+          expect(response.code).to eq('500')
+          expect(JSON.parse(response.body)['error']).to eq('bad request')
+          expect(JSON.parse(response.body)['success']).to eq('false')
+        end
       end
     end
 
