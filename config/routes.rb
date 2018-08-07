@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get '/container-hosts/:id', to: 'container_hosts#show', as: 'container_host'
 
   post '/containers', to: 'containers#create', as: 'containers_create'
-  post '/recreate_container', to: 'containers#recreate', as: 'containers_recreate'
+  post '/containers/recreate', to: 'containers#recreate', as: 'containers_recreate'
   get '/containers', to: 'containers#index', as: 'containers'
   get '/container', to: 'containers#show', as: 'container'
   get '/containers/new', to: 'containers#new', as: 'containers_new'
