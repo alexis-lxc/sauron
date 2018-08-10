@@ -5,7 +5,7 @@ module Lxd
   def add_remote(lxd_host_ipaddress)
     lxd = client(lxd_host_ipaddress)
     begin
-      lxd.create_certificate(File.read(lxd.client_cert), password: 'ubuntu')
+      lxd.create_certificate(File.read(lxd.client_cert), password: Figaro.env.CLUSTER_TRUST_PASSWORD)
     rescue StandardError => error
       return {success: false, errors: error.to_s} unless error.to_s.include? "Certificate already in trust store"
     end
