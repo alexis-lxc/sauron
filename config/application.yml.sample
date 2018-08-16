@@ -2,6 +2,7 @@ DB_HOST: localhost
 DB_USER: postgres
 DB_POOL: 10
 DB_PASSWORD:
+CLUSTER_TRUST_PASSWORD: ubuntu
 
 test:
   RAILS_ENV: test

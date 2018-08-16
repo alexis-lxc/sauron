@@ -247,6 +247,7 @@ RSpec.describe Lxd do
                                :may_cancel => false,
                                :err => ""}
       allow_any_instance_of(Hyperkit::Client).to receive(:stop_container).with(container_name).and_return(container_stop_details)
+      allow_any_instance_of(Hyperkit::Client).to receive(:wait_for_operation).and_return(status: 'Success', err: '')
       response = Lxd.stop_container(container_name)
       expect(response[:success]).to be_truthy
       expect(response[:error]).to eq('')
@@ -265,31 +266,66 @@ RSpec.describe Lxd do
     before(:each) do
       FactoryBot.create(:container_host)
       allow(ContainerHost).to receive(:reachable_node).and_return(ContainerHost.first.ipaddress)
+      container = Container.new(status: 'Running')
+      allow(Lxd).to receive(:show_container).with(container_hostname).and_return({data: container})
     end
 
     let(:lxd_host_ipaddress) {ContainerHost.first.ipaddress}
     let(:container_hostname) {'p-wallet-service-01'}
 
     context 'stop_container returns success true' do
-      context 'delete_container returns success true' do
-        it 'should return success true' do
-          allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'true'})
-
-          expect(DeleteContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname).once
-          response = Lxd.destroy_container(container_hostname)
-          expect(response[:success]).to eq('true')
-        end
+      it 'should return success true' do
+        allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'true'})
+        allow(DeleteContainer).to receive(:perform_in).and_return(true)
+        expect(DeleteContainer).to receive(:perform_in).with(Figaro.env.WAIT_INTERVAL_FOR_CONTAINER_OPERATIONS, container_hostname).once
+        response = Lxd.destroy_container(container_hostname)
+        expect(response[:success]).to eq('true')
       end
-      context 'delete_container returns success false' do
-        it 'should return success false' do
-          allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'false', error: 'bad request'})
+    end
 
-          expect(DeleteContainer).not_to receive(:perform_in)
-          response = Lxd.destroy_container(container_hostname)
+    context 'stop_container returns success false' do
+      it 'should return success false' do
+        allow(Lxd).to receive(:stop_container).with(container_hostname).and_return({success: 'false', error: 'bad request'})
+        expect(DeleteContainer).not_to receive(:perform_in)
+        response = Lxd.destroy_container(container_hostname)
+        expect(response[:success]).to eq('false')
+        expect(response[:error]).to eq('bad request')
+      end
+    end
+  end
 
-          expect(response[:success]).to eq('false')
-          expect(response[:error]).to eq('bad request')
-        end
+  describe 'recreate_container' do
+    before(:each) do
+      FactoryBot.create(:container_host)
+      allow(ContainerHost).to receive(:reachable_node).and_return(ContainerHost.first.ipaddress)
+      container = Container.new(status: 'Running')
+      allow(Lxd).to receive(:show_container).with(container_hostname).and_return({data: container})
+    end
+
+    let(:container_hostname) {'p-wallet-service-01'}
+
+    context 'recreate process success' do
+      it 'should return success true' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:stop_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:delete_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:create_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:wait_for_operation).and_return(status: 'Success', err: '')
+        allow(StartContainer).to receive(:perform_async).and_return(true)
+        expect(StartContainer).to receive(:perform_async).with(container_hostname).once
+        response = Lxd.recreate_container(container_hostname)
+        expect(response[:success]).to eq('true')
+      end
+    end
+
+    context 'recreate process fail when creating the container' do
+      it 'should return success false' do
+        allow_any_instance_of(Hyperkit::Client).to receive(:stop_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:delete_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:create_container).and_return(id: 1)
+        allow_any_instance_of(Hyperkit::Client).to receive(:wait_for_operation).and_return(status: 'False', err: '')
+        expect(StartContainer).not_to receive(:perform_async)
+        response = Lxd.recreate_container(container_hostname)
+        expect(response[:success]).to eq(false)
       end
     end
   end
